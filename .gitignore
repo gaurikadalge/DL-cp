@@ -1,0 +1,119 @@
+# ==========================================
+# Multimodal RAG Research Assistant - .gitignore
+# ==========================================
+
+# --- Environments and Virtualenvs ---
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Environment and Secret Files ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+*.p12
+
+# --- Python Bytecode & Cache ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Testing and Quality Tooling ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# --- Operating System Artifacts ---
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+
+# Linux
+*~
+
+# --- IDEs and Text Editors ---
+.vscode/
+!.vscode/settings.json.example
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# --- Project Specific Runtime Data & Uploads ---
+# Exclude uploaded PDFs and user documents, but keep the directory tracked
+data/uploads/*
+!data/uploads/.gitkeep
+data/*.db
+data/*.sqlite3
+data/*.sqlite
+data/*.sql
+data/*.dump
+
+# --- Vector Indexes, Model Caches & Checkpoints ---
+# Exclude heavy binary index files, but keep directory tracked
+indexes/*
+!indexes/.gitkeep
+*.faiss
+*.index
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
+models/
+cache/
+
+# --- Logs & Scratch Files ---
+*.log
+logs/
+scratch/
+tmp/
+temp/

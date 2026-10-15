@@ -1,0 +1,32 @@
+# ==============================================================================
+# Development Docker Compose Configuration
+# Note: Docker is OPTIONAL for Phase 0 local development.
+# The default local prototype uses SQLite (data/research_assistant.db).
+# This configuration provides an optional PostgreSQL service for team members
+# testing persistent metadata storage in later phases (Phase 4+).
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dlcp_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-dlcp_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dlcp_secure_dev_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-dlcp_research_assistant}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dlcp_user} -d ${POSTGRES_DB:-dlcp_research_assistant}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: dlcp_postgres_data

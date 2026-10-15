@@ -1,0 +1,17 @@
+LICENSING NOTICE & STATUS
+=========================
+
+Repository: gaurikadalge/DL-cp (Multimodal RAG Research Assistant)
+
+Status: Unlicensed / Decision Pending Repository Owner Selection
+
+This repository currently does not have an explicit open-source license granted by the repository owner (Gauri Kadalge) and the project team. Under default copyright law, the creators retain all rights to their source code, and no user or collaborator has permission to redistribute, reproduce, or create derivative works outside authorized team collaboration.
+
+Team Decision Pending:
+The repository owner and team members should review and select an appropriate license for the academic project:
+1. MIT License: Highly permissive, widely adopted for academic AI tools, allows open sharing with attribution.
+2. Apache License 2.0: Permissive with explicit patent rights grants and trademark restrictions.
+3. GNU General Public License v3 (GPLv3): Strong copyleft requiring derived systems to remain open-source.
+4. Academic Free License / Custom Educational Use.
+
+Until a formal license file is committed by the repository owner, all rights are reserved by the authors.
