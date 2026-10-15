@@ -1,0 +1,28 @@
+# ==========================================
+# Core Runtime Requirements (Foundation / Phase 0)
+# ==========================================
+# Note: Keep in sync with pyproject.toml [project.dependencies]
+
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+python-multipart>=0.0.9
+
+# ------------------------------------------
+# Optional / Planned Pipeline Dependencies
+# Install when implementing respective phases:
+# ------------------------------------------
+# # Document Extraction & OCR (Phase 2):
+# pymupdf>=1.23.0
+# pytesseract>=0.3.10
+# Pillow>=10.2.0
+#
+# # Embeddings, Dense Vector Index & BM25 (Phase 3 & 4):
+# sentence-transformers>=2.5.0
+# faiss-cpu>=1.8.0
+# rank-bm25>=0.2.2
+#
+# # Persistent Metadata DB (Optional PostgreSQL):
+# sqlalchemy>=2.0.28
+# psycopg2-binary>=2.9.9

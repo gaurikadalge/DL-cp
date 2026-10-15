@@ -1,0 +1,31 @@
+# ==========================================
+# Multimodal RAG Research Assistant - .gitattributes
+# ==========================================
+
+# Set default behavior to automatically normalize line endings to LF
+* text=auto eol=lf
+
+# Explicitly declare text files you want to always be normalized and not converted to CRLF on checkout
+*.py text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf
+Makefile text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.env.example text eol=lf
+
+# Declare binary files (prevent corruption by Git line-ending conversions)
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.faiss binary
+*.bin binary
+*.db binary
+*.sqlite3 binary
