@@ -56,85 +56,83 @@ This living document tracks the concrete implementation state of the **Multimoda
 - Semantic Chunking with Stable IDs: **Planned (Phase 1 & 2)**
 - Table and Caption Extraction: **Planned (Phase 2)**
 
-### 3.3 Retrieval Engine (`rag_engine/`)
-- Directory Scaffold: **Scaffolded, not yet verified** (`rag_engine/__init__.py`)
-- SentenceTransformers Embedding Model: **Planned (Phase 1)**
-- FAISS Dense Vector Indexing: **Planned (Phase 1)**
-- BM25 Keyword Search: **Planned (Phase 4)**
-- Reciprocal Rank Fusion (RRF): **Planned (Phase 4)**
-- Cross-Encoder Reranking: **Optional (Phase 4)**
+### 3.3 Retrieval Engine (`rag_engine/`) — Person 1 (Complete)
+- `EmbeddingService` (SentenceTransformers lazy load, L2 normalization, validation): **Implemented and tested**
+- `DenseRetriever` (FAISS IndexFlatIP exact cosine similarity, mapping, persistence, filtering): **Implemented and tested**
+- `BM25Retriever` (rank-bm25 deterministic tokenizer, scoring, persistence, deletion): **Implemented and tested**
+- `HybridRetriever` (Reciprocal Rank Fusion RRF, deduplication, tie-breaking): **Implemented and tested**
+- `RerankerService` (CrossEncoder reranking with graceful RRF fallback policy): **Implemented and tested**
+- `ContextBuilder` (Token budget enforcement, prompt-injection defense, citation mapping): **Implemented and tested**
+- `AnswerGenerator` (LLMProvider abstraction, MockLLM, OpenAI provider, grounded prompts): **Implemented and tested**
+- `CitationValidator` (Authoritative source resolution, tag parsing, hallucination rejection): **Implemented and tested**
+- `IndexManager` (Synchronized add, persist, load, delete, rebuild lifecycle): **Implemented and tested**
+- `RAGPipeline` (Full end-to-end question answering pipeline with monotonic timing): **Implemented and tested**
 
-### 3.4 Grounded Generation & Citations (`app/services/`)
-- Directory Scaffold: **Scaffolded, not yet verified** (`app/services/__init__.py`)
-- LLM Provider Abstraction: **Planned (Phase 5)**
-- Grounding Prompt Injection: **Planned (Phase 5)**
-- Traceable Citation Extraction (`[1]`, `[2]`): **Planned (Phase 5)**
-- Insufficient Evidence Abstention Trigger: **Planned (Phase 5)**
+### 3.4 Ingestion & Multimodal Processing (`ingestion/`) — Person 3
+- Directory Scaffold: **Scaffolded, not yet verified** (`ingestion/__init__.py`)
+- PDF File Validation (header bytes `%PDF-`): **Planned (Phase 1)**
+- PyMuPDF Text & Layout Extraction: **Planned (Phase 1)**
+- Scanned Page Detection & Tesseract OCR: **Planned (Phase 2)**
+- Semantic Chunking with Stable IDs: **Planned (Phase 1 & 2)**
+- Table and Caption Extraction: **Planned (Phase 2)**
 
-### 3.5 User Interface & Evaluation
+### 3.5 User Interface & Evaluation — Person 4 & Person 1
+- Evaluation Metrics (Hit@K, Recall@K, MRR, NDCG@K): **Implemented and tested** (`evaluation/retrieval_metrics.py`)
+- Benchmark Dataset (Synthetic academic fixtures & queries): **Implemented and tested** (`evaluation/benchmark_dataset.py`)
+- Retrieval Evaluation Script (Baseline comparisons on BM25 vs Dense vs Hybrid): **Implemented and tested** (`evaluation/evaluate_retrieval.py`)
 - Streamlit Research Portal: **Planned (Phase 6)**
-- Evaluation Framework Specification: **Scaffolded, not yet verified** (`evaluation/README.md`)
-- Retrieval Benchmark Suite (Hit@K, MRR): **Planned (Phase 7)**
-- Groundedness / Faithfulness Evaluator: **Planned (Phase 7)**
 
 ---
 
 ## 4. Test & Verification Outcomes
 
-### Automated Unit Tests
-Command executed:
-```bash
-pytest -v
+### Automated Test Suite (`pytest -v`)
 ```
-Result:
-```
-tests/unit/test_config.py::test_default_settings PASSED
-tests/unit/test_config.py::test_port_validation PASSED
-tests/unit/test_config.py::test_secret_masking PASSED
-tests/unit/test_config.py::test_environment_override PASSED
-tests/unit/test_health.py::test_root_endpoint PASSED
-tests/unit/test_health.py::test_health_endpoint PASSED
-tests/unit/test_health.py::test_not_found_returns_structured_error PASSED
-============================== 7 passed in 0.15s ===============================
+============================= test session starts ==============================
+collected 48 items
+
+tests/integration/test_index_lifecycle.py ..                             [  4%]
+tests/integration/test_rag_pipeline.py ..                                [  8%]
+tests/unit/test_answer_generator.py ....                                 [ 16%]
+tests/unit/test_bm25_retriever.py .....                                  [ 27%]
+tests/unit/test_citations.py ....                                        [ 35%]
+tests/unit/test_config.py ....                                           [ 43%]
+tests/unit/test_context_builder.py ....                                  [ 52%]
+tests/unit/test_dense_retriever.py .....                                 [ 62%]
+tests/unit/test_embedding_model.py .....                                 [ 72%]
+tests/unit/test_health.py ...                                            [ 79%]
+tests/unit/test_hybrid_retriever.py ...                                  [ 85%]
+tests/unit/test_reranker.py ...                                          [ 91%]
+tests/unit/test_retrieval_metrics.py ....                                [100%]
+
+============================== 48 passed in 0.27s ==============================
 ```
 
-### Smoke Test Execution
-Command executed:
-```bash
-python scripts/smoke_test.py --url http://127.0.0.1:8000
+### Retrieval Benchmark Empirical Evaluation
+Command: `PYTHONPATH=. python3 evaluation/evaluate_retrieval.py`
 ```
-Result:
-```
-============================================================
-Starting Multimodal RAG API Smoke Test against: http://127.0.0.1:8000
-============================================================
-[OK] Root Service Info (http://127.0.0.1:8000/) returned HTTP 200
-     Service: Multimodal RAG Research Assistant | Version: 0.1.0
-[OK] Health Check (http://127.0.0.1:8000/health) returned HTTP 200
-     Health Status: ok
-     Reported Dependencies:
-       - database: configured
-       - vector_index: not_loaded_scaffold
-       - keyword_retrieval: not_loaded_scaffold
-       - llm_provider: not_configured
-       - ocr_engine: disabled
-       - reranker: disabled
-============================================================
-[SUCCESS] All smoke test assertions passed successfully!
-============================================================
+======================================================================
+RETRIEVAL BENCHMARK EVALUATION (K = 5, N = 5 Queries)
+======================================================================
+Retrieval Configuration   | Hit@K    | Recall@K   | MRR      | NDCG@K  
+----------------------------------------------------------------------
+BM25 Only                 | 1.0000   | 1.0000     | 1.0000   | 1.0000  
+Dense Only                | 1.0000   | 1.0000     | 1.0000   | 0.9903  
+Hybrid RRF                | 1.0000   | 1.0000     | 1.0000   | 0.9903  
+======================================================================
 ```
 
 ---
 
 ## 5. Current Decisions & Known Limitations
 
-1. **License Status**: The repository is currently unlicensed pending team/owner consensus between MIT and Apache 2.0. Documented in `LICENSE`.
-2. **Database Architecture**: SQLite (`sqlite:///./data/research_assistant.db`) is configured as the default for rapid local prototyping without requiring external services. PostgreSQL is provided via optional `docker-compose.yml`.
-3. **No Premature Model Weights**: Embedding models (`sentence-transformers`) and vector libraries (`faiss`) have not been loaded or downloaded during Phase 0, keeping the environment lightweight.
-4. **Dependency Honest Disclosure**: `/health` explicitly reports `vector_index: not_loaded_scaffold` and `llm_provider: not_configured` rather than falsely reporting all external systems are healthy.
+1. **CPU Execution Baseline**: All FAISS indexes use `faiss-cpu` (v1.15.1) with `IndexFlatIP`, enabling fast and reliable CPU execution without requiring GPU or CUDA dependencies.
+2. **Deterministic Encoders for Tests**: Unit and integration tests utilize deterministic encoders to avoid downloading multi-hundred megabyte transformer models during testing and CI.
+3. **Graceful Fallbacks**: Reranker falls back to RRF without crashing if the model is disabled or fails; AnswerGenerator falls back to explicit insufficient evidence notice if context is empty.
 
 ---
 
-## 6. Immediate Next Steps (Phase 1)
-- Create `feature/ingestion` and `feature/rag-engine` branches.
-- Implement the minimal vertical slice: ingest 1 sample PDF with PyMuPDF, embed chunks using `sentence-transformers/all-MiniLM-L6-v2`, index in temporary FAISS, and retrieve top evidence chunks.
+## 6. Integration Readiness & Next Steps
+- **Person 3 Handoff**: RAG engine is ready to receive `List[StableChunkMetadata]` via `IndexManager.add_chunks()`.
+- **Person 2 Handoff**: `RAGPipeline.answer_question()` is ready to be mounted in `POST /query` endpoint.
+- **Person 4 Handoff**: `QueryResponse` contains structured `citations` and `evidence` with per-chunk retrieval scores ready for UI rendering.
