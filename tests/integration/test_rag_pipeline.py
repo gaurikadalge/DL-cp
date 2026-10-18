@@ -3,7 +3,6 @@
 from app.config import Settings
 from app.schemas import StableChunkMetadata
 from rag_engine.answer_generator import MockLLMProvider
-from rag_engine.embedding_model import EmbeddingService
 from rag_engine.rag_pipeline import create_pipeline
 
 
@@ -16,12 +15,14 @@ class DeterministicEncoder:
         return self.dimension
 
     def encode(self, texts, **kwargs):
+        import hashlib
+
         import numpy as np
         vecs = []
         for t in texts:
             vec = np.zeros(self.dimension, dtype=np.float32)
             for word in t.lower().split():
-                idx = abs(hash(word)) % self.dimension
+                idx = int(hashlib.md5(word.encode("utf-8")).hexdigest(), 16) % self.dimension
                 vec[idx] += 1.0
             norm = np.linalg.norm(vec)
             vecs.append(vec / norm if norm > 0 else vec)

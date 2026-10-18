@@ -1,6 +1,6 @@
 """Unit tests for ContextBuilder and evidence sanitization."""
 
-from app.schemas import RetrievedEvidence, RetrievalScoring, StableChunkMetadata
+from app.schemas import RetrievalScoring, RetrievedEvidence, StableChunkMetadata
 from rag_engine.context_builder import ContextBuilder, sanitize_evidence_text
 
 

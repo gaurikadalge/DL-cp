@@ -1,7 +1,7 @@
 """Cross-encoder reranking service for candidate refinement."""
 
 import logging
-from typing import List, Optional
+
 from app.schemas import RetrievedEvidence
 
 logger = logging.getLogger("rag_engine.reranker")
@@ -19,7 +19,7 @@ class RerankerService:
         enabled: bool = False,
         model_name: str = "BAAI/bge-reranker-base",
         device: str = "cpu",
-        custom_encoder: Optional[object] = None,
+        custom_encoder: object | None = None,
     ):
         self.enabled = enabled
         self.model_name = model_name
@@ -48,9 +48,9 @@ class RerankerService:
     def rerank(
         self,
         query: str,
-        candidates: List[RetrievedEvidence],
-        top_k: Optional[int] = None,
-    ) -> List[RetrievedEvidence]:
+        candidates: list[RetrievedEvidence],
+        top_k: int | None = None,
+    ) -> list[RetrievedEvidence]:
         """Rerank candidate evidence chunks.
 
         If disabled or on model error, returns candidates in their original RRF order.
@@ -68,8 +68,8 @@ class RerankerService:
             scores = self.model.predict(pairs)
 
             # Assign reranker scores
-            scored_candidates: List[RetrievedEvidence] = []
-            for cand, score in zip(candidates, scores):
+            scored_candidates: list[RetrievedEvidence] = []
+            for cand, score in zip(candidates, scores, strict=False):
                 cand.scoring.rerank_score = float(score)
                 scored_candidates.append(cand)
 

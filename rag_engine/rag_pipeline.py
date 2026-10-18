@@ -2,7 +2,6 @@
 
 import logging
 import time
-from typing import List, Optional
 import uuid
 
 from app.schemas import (
@@ -47,9 +46,9 @@ class RAGPipeline:
     def answer_question(
         self,
         query: str,
-        document_ids: Optional[List[str]] = None,
+        document_ids: list[str] | None = None,
         top_k: int = 5,
-        query_id: Optional[str] = None,
+        query_id: str | None = None,
     ) -> QueryResponse:
         """Process research question from end-to-end and emit grounded, verifiable response."""
         start_total = time.perf_counter()
@@ -63,7 +62,7 @@ class RAGPipeline:
         # Stage 1: Hybrid Retrieval (Dense + BM25 + RRF)
         # ----------------------------------------------------------------------
         start_retrieval = time.perf_counter()
-        candidates: List[RetrievedEvidence] = self.hybrid_retriever.retrieve(
+        candidates: list[RetrievedEvidence] = self.hybrid_retriever.retrieve(
             query=stripped_query,
             top_k=top_k,
             document_ids=document_ids,
@@ -74,7 +73,7 @@ class RAGPipeline:
         # Stage 2: Optional Cross-Encoder Reranking
         # ----------------------------------------------------------------------
         start_rerank = time.perf_counter()
-        reranking_ms: Optional[float] = None
+        reranking_ms: float | None = None
         if self.reranker.enabled and candidates:
             candidates = self.reranker.rerank(
                 query=stripped_query,
@@ -166,9 +165,9 @@ class RAGPipeline:
 
 def create_pipeline(
     settings,
-    custom_encoder: Optional[object] = None,
-    custom_reranker: Optional[object] = None,
-    custom_llm: Optional[LLMProvider] = None,
+    custom_encoder: object | None = None,
+    custom_reranker: object | None = None,
+    custom_llm: LLMProvider | None = None,
 ) -> RAGPipeline:
     """Factory helper creating a fully configured RAGPipeline from Settings."""
     from rag_engine.bm25_retriever import BM25Retriever

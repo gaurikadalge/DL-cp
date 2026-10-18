@@ -1,6 +1,7 @@
 """Integration tests for IndexManager lifecycle, persistence, and deletion."""
 
 import numpy as np
+
 from app.schemas import StableChunkMetadata
 from rag_engine.bm25_retriever import BM25Retriever
 from rag_engine.dense_retriever import DenseRetriever

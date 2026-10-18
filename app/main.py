@@ -8,11 +8,11 @@ Provides:
 
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request, status
+
+from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import __version__
@@ -38,13 +38,13 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager for startup and shutdown routines."""
     settings = get_settings()
     logger.info("Initializing %s (v%s) in '%s' environment", settings.app_name, __version__, settings.app_env)
-    
+
     # Ensure runtime data directories exist safely
     settings.storage_dir.mkdir(parents=True, exist_ok=True)
     settings.index_path.mkdir(parents=True, exist_ok=True)
-    
+
     yield
-    
+
     logger.info("Shutting down %s", settings.app_name)
 
 
@@ -177,6 +177,10 @@ def create_app() -> FastAPI:
             environment=settings.app_env,
             dependencies=dependencies,
         )
+
+    # Mount Document Lifecycle API routes
+    from app.api.documents import router as documents_router
+    app.include_router(documents_router)
 
     return app
 

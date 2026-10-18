@@ -3,7 +3,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+
 import faiss
 import numpy as np
 
@@ -25,16 +25,16 @@ class DenseRetriever:
         self.dimension = dimension
         self.index: faiss.Index = faiss.IndexFlatIP(dimension)
         # Internal sequential mapping: position (int) -> chunk_id (str)
-        self.id_map: List[str] = []
+        self.id_map: list[str] = []
         # Chunk registry: chunk_id (str) -> StableChunkMetadata
-        self.chunk_store: Dict[str, StableChunkMetadata] = {}
+        self.chunk_store: dict[str, StableChunkMetadata] = {}
 
     @property
     def total_chunks(self) -> int:
         """Return the number of vectors stored in the index."""
         return self.index.ntotal
 
-    def add_chunks(self, chunks: List[StableChunkMetadata], embeddings: np.ndarray) -> None:
+    def add_chunks(self, chunks: list[StableChunkMetadata], embeddings: np.ndarray) -> None:
         """Add new chunks and their corresponding dense vectors to the FAISS index."""
         if not chunks:
             return
@@ -56,11 +56,10 @@ class DenseRetriever:
                 logger.warning("Chunk ID '%s' already indexed. Updating metadata.", chunk.chunk_id)
 
         # Add to FAISS index
-        start_idx = self.index.ntotal
         self.index.add(vectors)
 
         # Record sequential mapping and chunk data
-        for i, chunk in enumerate(chunks):
+        for _i, chunk in enumerate(chunks):
             self.id_map.append(chunk.chunk_id)
             self.chunk_store[chunk.chunk_id] = chunk
 
@@ -70,8 +69,8 @@ class DenseRetriever:
         self,
         query_vector: np.ndarray,
         top_k: int = 10,
-        document_ids: Optional[List[str]] = None,
-    ) -> List[Tuple[StableChunkMetadata, float]]:
+        document_ids: list[str] | None = None,
+    ) -> list[tuple[StableChunkMetadata, float]]:
         """Perform top-k similarity search against dense index with optional document filtering.
 
         Returns:
@@ -95,10 +94,10 @@ class DenseRetriever:
 
         distances, indices = self.index.search(query_vector, search_k)
 
-        results: List[Tuple[StableChunkMetadata, float]] = []
+        results: list[tuple[StableChunkMetadata, float]] = []
         doc_filter_set = set(document_ids) if document_ids else None
 
-        for score, idx in zip(distances[0], indices[0]):
+        for score, idx in zip(distances[0], indices[0], strict=False):
             if idx == -1 or idx >= len(self.id_map):
                 continue
             chunk_id = self.id_map[idx]
@@ -115,14 +114,14 @@ class DenseRetriever:
 
         return results
 
-    def delete_document(self, document_id: str, rebuild_embeddings: Optional[np.ndarray] = None) -> int:
+    def delete_document(self, document_id: str, rebuild_embeddings: np.ndarray | None = None) -> int:
         """Remove all chunks associated with a document_id and rebuild index integrity.
 
         Returns:
             Number of chunks removed.
         """
-        chunks_to_keep: List[StableChunkMetadata] = []
-        ids_to_keep: List[str] = []
+        chunks_to_keep: list[StableChunkMetadata] = []
+        ids_to_keep: list[str] = []
         removed_count = 0
 
         for chunk_id in self.id_map:
@@ -154,7 +153,7 @@ class DenseRetriever:
         logger.info("Deleted %d chunks for doc '%s'. Remaining total: %d", removed_count, document_id, self.index.ntotal)
         return removed_count
 
-    def save(self, directory: Union[str, Path]) -> None:
+    def save(self, directory: str | Path) -> None:
         """Persist FAISS binary index and metadata mapping to disk."""
         target_dir = Path(directory)
         target_dir.mkdir(parents=True, exist_ok=True)
@@ -176,7 +175,7 @@ class DenseRetriever:
         logger.info("Persisted dense index (%d vectors) to %s", self.index.ntotal, target_dir)
 
     @classmethod
-    def load(cls, directory: Union[str, Path]) -> "DenseRetriever":
+    def load(cls, directory: str | Path) -> "DenseRetriever":
         """Load FAISS index and metadata mapping from disk."""
         target_dir = Path(directory)
         index_file = target_dir / "dense_index.faiss"
@@ -185,7 +184,7 @@ class DenseRetriever:
         if not index_file.exists() or not meta_file.exists():
             raise FileNotFoundError(f"Missing dense index files in {target_dir}")
 
-        with open(meta_file, "r", encoding="utf-8") as f:
+        with open(meta_file, encoding="utf-8") as f:
             meta = json.load(f)
 
         dimension = meta["dimension"]

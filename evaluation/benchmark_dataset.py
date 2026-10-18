@@ -4,14 +4,14 @@ NOTE: This is synthetic fixture test data for automated evaluation and regressio
 It does not represent production benchmark claims.
 """
 
-from typing import Dict, List
+
 from app.schemas import StableChunkMetadata
 
 # ------------------------------------------------------------------------------
 # 1. Authoritative Fixture Document Chunks
 # ------------------------------------------------------------------------------
 
-FIXTURE_CHUNKS: List[StableChunkMetadata] = [
+FIXTURE_CHUNKS: list[StableChunkMetadata] = [
     # ResNet Paper
     StableChunkMetadata(
         chunk_id="resnet#chunk_001",
@@ -112,7 +112,7 @@ FIXTURE_CHUNKS: List[StableChunkMetadata] = [
 # 2. Evaluation Benchmark Queries with Ground Truth
 # ------------------------------------------------------------------------------
 
-BENCHMARK_QUERIES: List[Dict] = [
+BENCHMARK_QUERIES: list[dict] = [
     {
         "query_id": "q1",
         "query": "How do residual networks solve the degradation problem?",

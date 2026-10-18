@@ -4,7 +4,7 @@ import json
 import logging
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+
 from rank_bm25 import BM25Okapi
 
 from app.schemas import StableChunkMetadata
@@ -15,7 +15,7 @@ logger = logging.getLogger("rag_engine.bm25_retriever")
 WORD_REGEX = re.compile(r"\b[a-zA-Z0-9_\-\./]+\b")
 
 
-def tokenize(text: str) -> List[str]:
+def tokenize(text: str) -> list[str]:
     """Tokenize academic text deterministically, preserving terms, abbreviations, and numbers."""
     if not text:
         return []
@@ -26,16 +26,16 @@ class BM25Retriever:
     """Keyword retriever utilizing Okapi BM25 for domain terms and acronym search."""
 
     def __init__(self):
-        self.chunks: List[StableChunkMetadata] = []
-        self.corpus_tokens: List[List[str]] = []
-        self.chunk_store: Dict[str, StableChunkMetadata] = {}
-        self._bm25: Optional[BM25Okapi] = None
+        self.chunks: list[StableChunkMetadata] = []
+        self.corpus_tokens: list[list[str]] = []
+        self.chunk_store: dict[str, StableChunkMetadata] = {}
+        self._bm25: BM25Okapi | None = None
 
     @property
     def total_chunks(self) -> int:
         return len(self.chunks)
 
-    def add_chunks(self, chunks: List[StableChunkMetadata]) -> None:
+    def add_chunks(self, chunks: list[StableChunkMetadata]) -> None:
         """Add new chunks and update BM25 corpus."""
         if not chunks:
             return
@@ -63,8 +63,8 @@ class BM25Retriever:
         self,
         query: str,
         top_k: int = 10,
-        document_ids: Optional[List[str]] = None,
-    ) -> List[Tuple[StableChunkMetadata, float]]:
+        document_ids: list[str] | None = None,
+    ) -> list[tuple[StableChunkMetadata, float]]:
         """Search corpus for matching query keywords.
 
         Returns:
@@ -81,10 +81,10 @@ class BM25Retriever:
         scores = self._bm25.get_scores(tokens)
 
         # Pair scores with chunks
-        scored_pairs: List[Tuple[StableChunkMetadata, float]] = []
+        scored_pairs: list[tuple[StableChunkMetadata, float]] = []
         doc_filter_set = set(document_ids) if document_ids else None
 
-        for chunk, score in zip(self.chunks, scores):
+        for chunk, score in zip(self.chunks, scores, strict=False):
             if score <= 0.0:
                 continue
             if doc_filter_set and chunk.document_id not in doc_filter_set:
@@ -116,7 +116,7 @@ class BM25Retriever:
         logger.info("Deleted %d BM25 chunks for doc '%s'. Remaining: %d", removed_count, document_id, len(self.chunks))
         return removed_count
 
-    def save(self, directory: Union[str, Path]) -> None:
+    def save(self, directory: str | Path) -> None:
         """Persist BM25 chunks and metadata to disk for deterministic recovery."""
         target_dir = Path(directory)
         target_dir.mkdir(parents=True, exist_ok=True)
@@ -131,7 +131,7 @@ class BM25Retriever:
         logger.info("Persisted BM25 corpus (%d chunks) to %s", len(self.chunks), file_path)
 
     @classmethod
-    def load(cls, directory: Union[str, Path]) -> "BM25Retriever":
+    def load(cls, directory: str | Path) -> "BM25Retriever":
         """Reconstruct BM25 index from persisted chunk records."""
         target_dir = Path(directory)
         file_path = target_dir / "bm25_metadata.json"
@@ -139,7 +139,7 @@ class BM25Retriever:
         if not file_path.exists():
             raise FileNotFoundError(f"Missing BM25 metadata file in {target_dir}")
 
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             data = json.load(f)
 
         chunks = [StableChunkMetadata(**c) for c in data["chunks"]]

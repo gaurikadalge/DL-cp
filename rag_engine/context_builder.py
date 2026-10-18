@@ -1,7 +1,7 @@
 """Evidence context selection and formatting with prompt-injection defense."""
 
 import logging
-from typing import Dict, List, Tuple
+
 from app.schemas import RetrievedEvidence, StableChunkMetadata
 
 logger = logging.getLogger("rag_engine.context_builder")
@@ -29,8 +29,8 @@ class ContextBuilder:
 
     def build_context(
         self,
-        evidence_list: List[RetrievedEvidence],
-    ) -> Tuple[str, Dict[str, StableChunkMetadata]]:
+        evidence_list: list[RetrievedEvidence],
+    ) -> tuple[str, dict[str, StableChunkMetadata]]:
         """Select evidence chunks within token budget and format them with numbered citation keys.
 
         Returns:
@@ -41,8 +41,8 @@ class ContextBuilder:
         if not evidence_list:
             return "", {}
 
-        formatted_blocks: List[str] = []
-        citation_map: Dict[str, StableChunkMetadata] = {}
+        formatted_blocks: list[str] = []
+        citation_map: dict[str, StableChunkMetadata] = {}
         seen_chunks = set()
         accumulated_chars = 0
 

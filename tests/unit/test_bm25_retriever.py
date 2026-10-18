@@ -1,6 +1,5 @@
 """Unit tests for BM25Retriever."""
 
-import pytest
 from app.schemas import StableChunkMetadata
 from rag_engine.bm25_retriever import BM25Retriever, tokenize
 

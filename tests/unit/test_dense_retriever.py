@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+
 from app.schemas import StableChunkMetadata
 from rag_engine.dense_retriever import DenseRetriever
 

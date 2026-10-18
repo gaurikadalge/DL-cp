@@ -1,7 +1,7 @@
 """Evaluation script comparing BM25, Dense, and Hybrid RRF retrieval on the benchmark dataset."""
 
 import logging
-from typing import Dict, List, Optional
+
 import numpy as np
 
 from evaluation.benchmark_dataset import BENCHMARK_QUERIES, FIXTURE_CHUNKS
@@ -25,7 +25,7 @@ class DeterministicHashEncoder:
 
     def encode(
         self,
-        texts: List[str],
+        texts: list[str],
         batch_size: int = 32,
         show_progress_bar: bool = False,
         convert_to_numpy: bool = True,
@@ -48,8 +48,8 @@ class DeterministicHashEncoder:
 
 def run_evaluation(
     k: int = 5,
-    custom_encoder: Optional[object] = None,
-) -> Dict[str, Dict[str, float]]:
+    custom_encoder: object | None = None,
+) -> dict[str, dict[str, float]]:
     """Execute evaluation comparing BM25, Dense, and Hybrid retrieval modes."""
     # 1. Initialize embedding service
     encoder = custom_encoder or DeterministicHashEncoder(dimension=64)
@@ -77,7 +77,7 @@ def run_evaluation(
         rrf_k=60,
     )
 
-    results: Dict[str, Dict[str, float]] = {
+    results: dict[str, dict[str, float]] = {
         "BM25 Only": {"Hit@K": 0.0, "Recall@K": 0.0, "MRR": 0.0, "NDCG@K": 0.0},
         "Dense Only": {"Hit@K": 0.0, "Recall@K": 0.0, "MRR": 0.0, "NDCG@K": 0.0},
         "Hybrid RRF": {"Hit@K": 0.0, "Recall@K": 0.0, "MRR": 0.0, "NDCG@K": 0.0},
@@ -116,7 +116,7 @@ def run_evaluation(
         results["Hybrid RRF"]["NDCG@K"] += ndcg_at_k(hybrid_ids, graded_rel, k)
 
     # Average metrics over queries
-    summary: Dict[str, Dict[str, float]] = {}
+    summary: dict[str, dict[str, float]] = {}
     for mode, metrics in results.items():
         summary[mode] = {
             metric: round(val / num_queries, 4) for metric, val in metrics.items()
@@ -125,7 +125,7 @@ def run_evaluation(
     return summary
 
 
-def print_evaluation_report(summary: Dict[str, Dict[str, float]], k: int = 5):
+def print_evaluation_report(summary: dict[str, dict[str, float]], k: int = 5):
     """Print ASCII comparison table of retrieval evaluation."""
     print("=" * 70)
     print(f"RETRIEVAL BENCHMARK EVALUATION (K = {k}, N = {len(BENCHMARK_QUERIES)} Queries)")

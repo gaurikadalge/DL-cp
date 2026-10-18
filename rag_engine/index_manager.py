@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import List, Optional, Union
+
 import numpy as np
 
 from app.schemas import StableChunkMetadata
@@ -21,14 +21,14 @@ class IndexManager:
         dense_retriever: DenseRetriever,
         bm25_retriever: BM25Retriever,
         embedding_service: EmbeddingService,
-        storage_dir: Union[str, Path] = "./indexes",
+        storage_dir: str | Path = "./indexes",
     ):
         self.dense_retriever = dense_retriever
         self.bm25_retriever = bm25_retriever
         self.embedding_service = embedding_service
         self.storage_dir = Path(storage_dir)
 
-    def add_chunks(self, chunks: List[StableChunkMetadata]) -> None:
+    def add_chunks(self, chunks: list[StableChunkMetadata]) -> None:
         """Embed and synchronously index document chunks in both FAISS and BM25."""
         if not chunks:
             return
@@ -51,7 +51,7 @@ class IndexManager:
         remaining_chunks = [
             c for c in self.dense_retriever.chunk_store.values() if c.document_id != document_id
         ]
-        rebuild_embeddings: Optional[np.ndarray] = None
+        rebuild_embeddings: np.ndarray | None = None
         if remaining_chunks:
             rebuild_embeddings = self.embedding_service.embed_texts([c.text for c in remaining_chunks])
 
@@ -69,7 +69,7 @@ class IndexManager:
         )
         return max(dense_removed, bm25_removed)
 
-    def save(self, directory: Optional[Union[str, Path]] = None) -> None:
+    def save(self, directory: str | Path | None = None) -> None:
         """Persist both FAISS and BM25 index states to storage."""
         target_dir = Path(directory or self.storage_dir)
         target_dir.mkdir(parents=True, exist_ok=True)
@@ -78,7 +78,7 @@ class IndexManager:
         self.bm25_retriever.save(target_dir)
         logger.info("Successfully persisted all retrieval indexes to %s", target_dir)
 
-    def load(self, directory: Optional[Union[str, Path]] = None) -> None:
+    def load(self, directory: str | Path | None = None) -> None:
         """Restore both FAISS and BM25 index states from storage."""
         target_dir = Path(directory or self.storage_dir)
         if not target_dir.exists():
@@ -88,7 +88,7 @@ class IndexManager:
         self.bm25_retriever = BM25Retriever.load(target_dir)
         logger.info("Successfully loaded retrieval indexes from %s", target_dir)
 
-    def rebuild_indexes(self, chunks: List[StableChunkMetadata]) -> None:
+    def rebuild_indexes(self, chunks: list[StableChunkMetadata]) -> None:
         """Reconstruct both indexes from scratch using an authoritative list of chunk records."""
         logger.info("Initiating full index rebuild with %d chunks...", len(chunks))
         dim = self.embedding_service.embedding_dimension

@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+
 from rag_engine.embedding_model import EmbeddingService
 
 

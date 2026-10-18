@@ -1,10 +1,9 @@
 """Information retrieval evaluation metrics: Hit@K, Recall@K, MRR, and NDCG@K."""
 
 import math
-from typing import Dict, List, Set
 
 
-def hit_at_k(retrieved_ids: List[str], ground_truth_ids: Set[str], k: int = 5) -> float:
+def hit_at_k(retrieved_ids: list[str], ground_truth_ids: set[str], k: int = 5) -> float:
     """Return 1.0 if at least one relevant chunk ID appears in top-k, else 0.0."""
     if not ground_truth_ids or k <= 0:
         return 0.0
@@ -12,7 +11,7 @@ def hit_at_k(retrieved_ids: List[str], ground_truth_ids: Set[str], k: int = 5) -
     return 1.0 if bool(top_k_ids.intersection(ground_truth_ids)) else 0.0
 
 
-def recall_at_k(retrieved_ids: List[str], ground_truth_ids: Set[str], k: int = 5) -> float:
+def recall_at_k(retrieved_ids: list[str], ground_truth_ids: set[str], k: int = 5) -> float:
     """Calculate Recall@K: proportion of relevant chunks retrieved in top-k."""
     if not ground_truth_ids or k <= 0:
         return 0.0
@@ -21,7 +20,7 @@ def recall_at_k(retrieved_ids: List[str], ground_truth_ids: Set[str], k: int = 5
     return float(hits) / float(len(ground_truth_ids))
 
 
-def mrr(retrieved_ids: List[str], ground_truth_ids: Set[str]) -> float:
+def mrr(retrieved_ids: list[str], ground_truth_ids: set[str]) -> float:
     """Calculate Mean Reciprocal Rank: 1 / rank of the first relevant chunk."""
     if not ground_truth_ids:
         return 0.0
@@ -32,8 +31,8 @@ def mrr(retrieved_ids: List[str], ground_truth_ids: Set[str]) -> float:
 
 
 def ndcg_at_k(
-    retrieved_ids: List[str],
-    ground_truth_relevance: Dict[str, float],
+    retrieved_ids: list[str],
+    ground_truth_relevance: dict[str, float],
     k: int = 5,
 ) -> float:
     """Calculate Normalized Discounted Cumulative Gain (NDCG@K) with multi-level relevance.

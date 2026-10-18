@@ -2,7 +2,7 @@
 
 import logging
 import re
-from typing import Dict, List, Set, Tuple
+
 from app.schemas import Citation, StableChunkMetadata
 
 logger = logging.getLogger("rag_engine.citations")
@@ -30,8 +30,8 @@ class CitationValidator:
     @staticmethod
     def validate_citations(
         answer: str,
-        citation_map: Dict[str, StableChunkMetadata],
-    ) -> Tuple[List[Citation], Set[str]]:
+        citation_map: dict[str, StableChunkMetadata],
+    ) -> tuple[list[Citation], set[str]]:
         """Extract and validate all citation markers in the generated answer.
 
         Args:
@@ -49,8 +49,8 @@ class CitationValidator:
         raw_tags = CITATION_TAG_REGEX.findall(answer)
         unique_tags = [f"[{num}]" for num in sorted(set(raw_tags), key=lambda x: int(x))]
 
-        resolved_citations: List[Citation] = []
-        unresolvable_tags: Set[str] = set()
+        resolved_citations: list[Citation] = []
+        unresolvable_tags: set[str] = set()
 
         for tag in unique_tags:
             chunk = citation_map.get(tag)

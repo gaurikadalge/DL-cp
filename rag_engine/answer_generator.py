@@ -1,11 +1,10 @@
 """Provider-independent grounded answer generator with strict evidence-anchoring prompts."""
 
-from abc import ABC, abstractmethod
 import json
 import logging
-from typing import Optional
 import urllib.error
 import urllib.request
+from abc import ABC, abstractmethod
 
 logger = logging.getLogger("rag_engine.answer_generator")
 
@@ -37,7 +36,7 @@ class LLMProvider(ABC):
 class MockLLMProvider(LLMProvider):
     """Deterministic fake provider for local development, automated testing, and offline use."""
 
-    def __init__(self, fixed_answer: Optional[str] = None):
+    def __init__(self, fixed_answer: str | None = None):
         self.fixed_answer = fixed_answer
 
     def generate(self, prompt: str, system_prompt: str = GROUNDED_SYSTEM_PROMPT) -> str:

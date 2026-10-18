@@ -1,7 +1,7 @@
 """Embedding service using Sentence Transformers with validation and lazy loading."""
 
 import logging
-from typing import List, Optional, Union
+
 import numpy as np
 
 logger = logging.getLogger("rag_engine.embedding_model")
@@ -24,8 +24,8 @@ class EmbeddingService:
         device: str = "cpu",
         batch_size: int = 32,
         normalize: bool = True,
-        query_instruction: Optional[str] = None,
-        custom_encoder: Optional[object] = None,
+        query_instruction: str | None = None,
+        custom_encoder: object | None = None,
     ):
         self.model_name = model_name
         self.device = device
@@ -34,7 +34,7 @@ class EmbeddingService:
         self.query_instruction = query_instruction
         self._custom_encoder = custom_encoder
         self._model = None
-        self._dimension: Optional[int] = None
+        self._dimension: int | None = None
 
     @property
     def model(self):
@@ -93,12 +93,12 @@ class EmbeddingService:
             raise ValueError("Generated embeddings contain non-finite values (NaN or Inf).")
         return embeddings
 
-    def embed_texts(self, texts: List[str]) -> np.ndarray:
+    def embed_texts(self, texts: list[str]) -> np.ndarray:
         """Encode a batch of document texts into normalized dense embeddings."""
         if not texts:
             raise ValueError("Input text list for embedding cannot be empty.")
 
-        cleaned_texts: List[str] = []
+        cleaned_texts: list[str] = []
         for i, text in enumerate(texts):
             if not isinstance(text, str):
                 raise TypeError(f"Item at index {i} is not a string: {type(text)}")

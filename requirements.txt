@@ -13,15 +13,15 @@ python-multipart>=0.0.9
 # Optional / Planned Pipeline Dependencies
 # Install when implementing respective phases:
 # ------------------------------------------
-# # Document Extraction & OCR (Phase 2):
-# pymupdf>=1.23.0
-# pytesseract>=0.3.10
-# Pillow>=10.2.0
-#
-# # Embeddings, Dense Vector Index & BM25 (Phase 3 & 4):
-# sentence-transformers>=2.5.0
-# faiss-cpu>=1.8.0
-# rank-bm25>=0.2.2
+# Document Extraction, OCR & Multimodal Processing (Person 3):
+pymupdf>=1.23.0
+pytesseract>=0.3.10
+Pillow>=10.2.0
+pdfplumber>=0.11.0
+
+# Embeddings, Dense Vector Index & BM25 (Person 1):
+faiss-cpu>=1.8.0
+rank-bm25>=0.2.2
 #
 # # Persistent Metadata DB (Optional PostgreSQL):
 # sqlalchemy>=2.0.28

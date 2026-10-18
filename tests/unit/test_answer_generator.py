@@ -1,6 +1,7 @@
 """Unit tests for AnswerGenerator and LLM providers."""
 
 import pytest
+
 from rag_engine.answer_generator import (
     INSUFFICIENT_EVIDENCE_MARKER,
     AnswerGenerator,

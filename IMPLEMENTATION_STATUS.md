@@ -48,13 +48,16 @@ This living document tracks the concrete implementation state of the **Multimoda
 - `DELETE /documents/{id}`: **Planned (Phase 3)**
 - `POST /query`: **Planned (Phase 4 & 5)**
 
-### 3.2 Ingestion & Multimodal Processing (`ingestion/`)
-- Directory Scaffold: **Scaffolded, not yet verified** (`ingestion/__init__.py`)
-- PDF File Validation (header bytes `%PDF-`): **Planned (Phase 1)**
-- PyMuPDF Text & Layout Extraction: **Planned (Phase 1)**
-- Scanned Page Detection & Tesseract OCR: **Planned (Phase 2)**
-- Semantic Chunking with Stable IDs: **Planned (Phase 1 & 2)**
-- Table and Caption Extraction: **Planned (Phase 2)**
+### 3.2 Multimodal Processing & Ingestion (`ingestion/`) — Person 3 (Complete)
+- `DocumentValidator` (MIME validation, magic byte checking for PDF/PNG/JPEG/TIFF/WebP, size limits, filename sanitization): **Implemented and tested**
+- `TextCleaner` (Academic hyphenation repair, ligature normalization, header/footer suppression, whitespace normalization): **Implemented and tested**
+- `PDFExtractor` (PyMuPDF layout-aware text & block extraction, font sizing, academic section heading detection): **Implemented and tested**
+- `ScannedPageDetector` & `OCREngine` (Scanned vs digital PDF classification, Tesseract/EasyOCR fallback, MockOCREngine): **Implemented and tested**
+- `TableExtractor` (Table structure recognition via PyMuPDF find_tables, Markdown & JSON representation, proximity captions): **Implemented and tested**
+- `FigureExtractor` & `CaptioningEngine` (Embedded figure extraction, BLIP vision captioning, proximity captions): **Implemented and tested**
+- `SemanticChunker` (Section-aware semantic chunking with sliding overlap, stable IDs `{doc_id}#chunk_{idx:04d}`, page tracking): **Implemented and tested**
+- `MultimodalIngestionPipeline` (End-to-end orchestration and direct handoff to RAG `IndexManager`): **Implemented and tested**
+- Document Lifecycle API (`POST /documents/upload`, `GET /documents`, `GET /documents/{id}`, `DELETE /documents/{id}`): **Implemented and tested**
 
 ### 3.3 Retrieval Engine (`rag_engine/`) — Person 1 (Complete)
 - `EmbeddingService` (SentenceTransformers lazy load, L2 normalization, validation): **Implemented and tested**
@@ -68,15 +71,7 @@ This living document tracks the concrete implementation state of the **Multimoda
 - `IndexManager` (Synchronized add, persist, load, delete, rebuild lifecycle): **Implemented and tested**
 - `RAGPipeline` (Full end-to-end question answering pipeline with monotonic timing): **Implemented and tested**
 
-### 3.4 Ingestion & Multimodal Processing (`ingestion/`) — Person 3
-- Directory Scaffold: **Scaffolded, not yet verified** (`ingestion/__init__.py`)
-- PDF File Validation (header bytes `%PDF-`): **Planned (Phase 1)**
-- PyMuPDF Text & Layout Extraction: **Planned (Phase 1)**
-- Scanned Page Detection & Tesseract OCR: **Planned (Phase 2)**
-- Semantic Chunking with Stable IDs: **Planned (Phase 1 & 2)**
-- Table and Caption Extraction: **Planned (Phase 2)**
-
-### 3.5 User Interface & Evaluation — Person 4 & Person 1
+### 3.4 User Interface & Evaluation — Person 4 & Person 1
 - Evaluation Metrics (Hit@K, Recall@K, MRR, NDCG@K): **Implemented and tested** (`evaluation/retrieval_metrics.py`)
 - Benchmark Dataset (Synthetic academic fixtures & queries): **Implemented and tested** (`evaluation/benchmark_dataset.py`)
 - Retrieval Evaluation Script (Baseline comparisons on BM25 vs Dense vs Hybrid): **Implemented and tested** (`evaluation/evaluate_retrieval.py`)
@@ -89,23 +84,32 @@ This living document tracks the concrete implementation state of the **Multimoda
 ### Automated Test Suite (`pytest -v`)
 ```
 ============================= test session starts ==============================
-collected 48 items
+collected 74 items
 
-tests/integration/test_index_lifecycle.py ..                             [  4%]
-tests/integration/test_rag_pipeline.py ..                                [  8%]
-tests/unit/test_answer_generator.py ....                                 [ 16%]
-tests/unit/test_bm25_retriever.py .....                                  [ 27%]
-tests/unit/test_citations.py ....                                        [ 35%]
-tests/unit/test_config.py ....                                           [ 43%]
-tests/unit/test_context_builder.py ....                                  [ 52%]
-tests/unit/test_dense_retriever.py .....                                 [ 62%]
-tests/unit/test_embedding_model.py .....                                 [ 72%]
-tests/unit/test_health.py ...                                            [ 79%]
-tests/unit/test_hybrid_retriever.py ...                                  [ 85%]
-tests/unit/test_reranker.py ...                                          [ 91%]
-tests/unit/test_retrieval_metrics.py ....                                [100%]
+tests/integration/test_index_lifecycle.py ..                             [  2%]
+tests/integration/test_multimodal_to_rag.py .                            [  4%]
+tests/integration/test_rag_pipeline.py ..                                [  6%]
+tests/unit/test_answer_generator.py ....                                 [ 12%]
+tests/unit/test_bm25_retriever.py .....                                  [ 18%]
+tests/unit/test_chunker.py ...                                           [ 22%]
+tests/unit/test_citations.py ....                                        [ 28%]
+tests/unit/test_cleaner.py .....                                         [ 35%]
+tests/unit/test_config.py ....                                           [ 40%]
+tests/unit/test_context_builder.py ....                                  [ 45%]
+tests/unit/test_dense_retriever.py .....                                 [ 52%]
+tests/unit/test_documents_api.py .                                       [ 54%]
+tests/unit/test_embedding_model.py .....                                 [ 60%]
+tests/unit/test_health.py ...                                            [ 64%]
+tests/unit/test_hybrid_retriever.py ...                                  [ 68%]
+tests/unit/test_image_extractor.py ...                                   [ 72%]
+tests/unit/test_ingestion_pipeline.py .                                  [ 74%]
+tests/unit/test_ocr_engine.py ....                                       [ 79%]
+tests/unit/test_reranker.py ...                                          [ 83%]
+tests/unit/test_retrieval_metrics.py ....                                [ 89%]
+tests/unit/test_table_extractor.py ..                                    [ 91%]
+tests/unit/test_validator.py ......                                      [100%]
 
-============================== 48 passed in 0.27s ==============================
+============================== 74 passed in 0.84s ==============================
 ```
 
 ### Retrieval Benchmark Empirical Evaluation

@@ -1,6 +1,7 @@
 """Unit tests for information retrieval evaluation metrics."""
 
 import pytest
+
 from evaluation.retrieval_metrics import hit_at_k, mrr, ndcg_at_k, recall_at_k
 
 

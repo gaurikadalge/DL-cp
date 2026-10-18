@@ -1,6 +1,6 @@
 """Unit tests for RerankerService."""
 
-from app.schemas import RetrievedEvidence, RetrievalScoring, StableChunkMetadata
+from app.schemas import RetrievalScoring, RetrievedEvidence, StableChunkMetadata
 from rag_engine.reranker import RerankerService
 
 

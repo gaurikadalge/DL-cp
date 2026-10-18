@@ -1,6 +1,7 @@
 """Unit tests for HybridRetriever and Reciprocal Rank Fusion."""
 
 import pytest
+
 from app.schemas import StableChunkMetadata
 from rag_engine.hybrid_retriever import HybridRetriever
 

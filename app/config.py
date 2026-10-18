@@ -6,7 +6,8 @@ Provides safe string representation preventing credential leakage in logs.
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
+
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -96,19 +97,19 @@ class Settings(BaseSettings):
     )
 
     # LLM Generation Provider Settings
-    llm_provider: Optional[str] = Field(
+    llm_provider: str | None = Field(
         default=None,
         description="LLM provider: 'openai', 'anthropic', 'ollama', 'groq', or mock",
     )
-    llm_model: Optional[str] = Field(
+    llm_model: str | None = Field(
         default=None,
         description="Model name/id to pass to LLM provider",
     )
-    llm_api_key: Optional[str] = Field(
+    llm_api_key: str | None = Field(
         default=None,
         description="API key for selected LLM provider",
     )
-    llm_base_url: Optional[str] = Field(
+    llm_base_url: str | None = Field(
         default=None,
         description="Custom base URL for local or proxy LLM endpoints",
     )
@@ -140,7 +141,7 @@ class Settings(BaseSettings):
         return data
 
 
-@lru_cache()
+@lru_cache
 def get_settings() -> Settings:
     """Return a cached instance of application settings."""
     return Settings()
