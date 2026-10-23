@@ -28,8 +28,8 @@ LIGATURE_MAP = {
     "\u2014": " -- ",
     "\u2013": "-",
     "\u00a0": " ",  # Non-breaking space
-    "\u200b": "",   # Zero-width space
-    "\ufeff": "",   # Byte-order mark
+    "\u200b": "",  # Zero-width space
+    "\ufeff": "",  # Byte-order mark
 }
 
 # Regex for line-split hyphenated words: word- \n nextword -> wordnextword

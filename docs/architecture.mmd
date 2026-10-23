@@ -1,0 +1,84 @@
+graph TB
+    subgraph ClientLayer["User Interface & Client Layer"]
+        UI["Streamlit Portal (app/frontend.py)<br/>• Research QA Interface<br/>• Document Upload & Library<br/>• Benchmark Visualizer"]
+        REST["HTTP REST Client / cURL"]
+    end
+
+    subgraph APILayer["FastAPI Application (app/)"]
+        FASTAPI["FastAPI App (app/main.py)"]
+        DOC_API["Documents API (app/api/documents.py)<br/>POST /upload, GET /documents, DELETE /{id}"]
+        QUERY_API["Query API (app/api/query.py)<br/>POST /query"]
+        CONFIG["Settings & Config (app/config.py)"]
+        RAG_SVC["RAGService Singleton (app/services/rag_service.py)"]
+        DOC_STORE["DocumentStore (app/services/document_store.py)"]
+    end
+
+    subgraph IngestionSubsystem["Multimodal Ingestion Subsystem (ingestion/)"]
+        VALIDATOR["DocumentValidator<br/>• Magic Bytes & MIME Check<br/>• Size Limit Enforcement"]
+        CLEANER["TextCleaner<br/>• Hyphenation Repair<br/>• Header/Footer Suppression"]
+        PDF_EXTRACT["PDFExtractor (PyMuPDF)<br/>• Block Geometry & Fonts<br/>• Heading Detection"]
+        OCR["OCREngine & ScannedDetector<br/>• Tesseract / EasyOCR Fallback"]
+        TABLES["TableExtractor<br/>• page.find_tables() -> Markdown"]
+        FIGURES["FigureExtractor<br/>• Raster Extraction & Captions"]
+        CHUNKER["SemanticChunker<br/>• Sliding Overlap Window<br/>• Stable IDs (doc#chunk_0001)"]
+    end
+
+    subgraph StorageLayer["Persistence & Storage Layer"]
+        SQLITE[("SQLite Database<br/>data/research_assistant.db")]
+        DISK_FAISS[("FAISS Index File<br/>indexes/dense_faiss.index")]
+        DISK_BM25[("BM25 Inverted Index<br/>indexes/bm25_store.json")]
+    end
+
+    subgraph RAGSubsystem["RAG & Information Retrieval Engine (rag_engine/)"]
+        EMBED["EmbeddingService<br/>SentenceTransformers / Hash Fallback"]
+        DENSE["DenseRetriever<br/>FAISS IndexFlatIP (Cosine Similarity)"]
+        BM25["BM25Retriever<br/>Okapi BM25 Sparse Search"]
+        HYBRID["HybridRetriever<br/>Reciprocal Rank Fusion (RRF, k=60)"]
+        RERANK["RerankerService<br/>Cross-Encoder MS-MARCO MiniLM"]
+        CTX_BUILDER["ContextBuilder<br/>• Token Budget Control<br/>• Prompt Injection Guard"]
+        LLM_GEN["AnswerGenerator<br/>• OpenAILLMProvider (gpt-4o-mini)<br/>• MockLLMProvider (Offline)"]
+        CIT_VAL["CitationValidator<br/>• Authoritative Chunk Verification<br/>• Hallucination Rejection"]
+        IDX_MGR["IndexManager<br/>• Atomic Add/Delete/Persist"]
+    end
+
+    %% Client Interactions
+    UI -->|HTTP /documents, /query| FASTAPI
+    REST -->|HTTP JSON API| FASTAPI
+    FASTAPI --> DOC_API
+    FASTAPI --> QUERY_API
+    FASTAPI --> CONFIG
+
+    %% Ingestion Data Flow
+    DOC_API -->|Upload PDF File| RAG_SVC
+    RAG_SVC --> VALIDATOR
+    VALIDATOR --> PDF_EXTRACT
+    PDF_EXTRACT --> OCR
+    PDF_EXTRACT --> CLEANER
+    PDF_EXTRACT --> TABLES
+    PDF_EXTRACT --> FIGURES
+    CLEANER --> CHUNKER
+    TABLES --> CHUNKER
+    FIGURES --> CHUNKER
+
+    %% Storage Integration
+    RAG_SVC -->|Save Document Metadata| DOC_STORE
+    DOC_STORE --> SQLITE
+    CHUNKER -->|Synchronize Chunks| IDX_MGR
+    IDX_MGR -->|Embeddings| DENSE
+    IDX_MGR -->|Tokenized Text| BM25
+    DENSE -->|Serialize Vector Index| DISK_FAISS
+    BM25 -->|Serialize Inverted Index| DISK_BM25
+
+    %% Query & Retrieval Execution Flow
+    QUERY_API -->|Execute Research Query| RAG_SVC
+    RAG_SVC -->|Encode Query| EMBED
+    EMBED -->|Dense Query Vector| DENSE
+    QUERY_API -->|Query String| BM25
+    DENSE -->|Top-N Dense Candidates| HYBRID
+    BM25 -->|Top-N Sparse Candidates| HYBRID
+    HYBRID -->|RRF Ranked Candidates| RERANK
+    RERANK -->|Top-K Reranked Evidence| CTX_BUILDER
+    CTX_BUILDER -->|Formatted Prompt + Evidence| LLM_GEN
+    LLM_GEN -->|Draft Answer + Citations| CIT_VAL
+    CIT_VAL -->|Validate with Evidence Set| QUERY_API
+    QUERY_API -->|Grounded Answer + Citations + Timing| UI

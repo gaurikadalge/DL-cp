@@ -58,7 +58,9 @@ class TableExtractor:
 
         # Normalize column count
         col_count = len(headers) if headers else max(len(r) for r in rows)
-        norm_headers = [headers[i].strip() if i < len(headers) else f"Col {i+1}" for i in range(col_count)]
+        norm_headers = [
+            headers[i].strip() if i < len(headers) else f"Col {i + 1}" for i in range(col_count)
+        ]
 
         # Header line
         md_lines = ["| " + " | ".join(h if h else "-" for h in norm_headers) + " |"]
@@ -67,7 +69,9 @@ class TableExtractor:
 
         # Data rows
         for row in rows:
-            norm_row = [row[i].strip().replace("\n", " ") if i < len(row) else "" for i in range(col_count)]
+            norm_row = [
+                row[i].strip().replace("\n", " ") if i < len(row) else "" for i in range(col_count)
+            ]
             md_lines.append("| " + " | ".join(norm_row) + " |")
 
         return "\n".join(md_lines)
@@ -130,7 +134,7 @@ class TableExtractor:
 
                 extracted.append(
                     ExtractedTable(
-                        table_id=f"p{page_number}_tbl_{idx+1}",
+                        table_id=f"p{page_number}_tbl_{idx + 1}",
                         page_number=page_number,
                         title_or_caption=caption,
                         headers=raw_headers,
@@ -140,6 +144,8 @@ class TableExtractor:
                     )
                 )
         except Exception as e:
-            logger.warning("PyMuPDF table extraction encountered an issue on page %d: %s", page_number, e)
+            logger.warning(
+                "PyMuPDF table extraction encountered an issue on page %d: %s", page_number, e
+            )
 
         return extracted

@@ -4,7 +4,9 @@ from app.schemas import StableChunkMetadata
 from rag_engine.citations import CitationValidator, extract_citation_snippet
 
 
-def sample_chunk(cid: str = "chunk_01", text: str = "A detailed research passage on neural networks."):
+def sample_chunk(
+    cid: str = "chunk_01", text: str = "A detailed research passage on neural networks."
+):
     return StableChunkMetadata(
         chunk_id=cid,
         document_id="doc_res",

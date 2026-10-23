@@ -1,0 +1,164 @@
+{
+  "metadata": {
+    "total_queries": 35,
+    "answerable_queries": 27,
+    "unanswerable_queries": 8,
+    "total_fixture_chunks": 20,
+    "k": 5,
+    "timestamp": "2026-10-23T05:12:54Z",
+    "evaluation_encoder": "DeterministicHashEncoder (dim=128)",
+    "evaluation_reranker": "DeterministicCrossEncoder"
+  },
+  "overall_results": {
+    "BM25 Only": {
+      "Hit@K": 1.0,
+      "Recall@K": 0.9136,
+      "MRR": 0.9444,
+      "NDCG@K": 0.893,
+      "Mean_Latency_ms": 0.11
+    },
+    "Dense Only": {
+      "Hit@K": 0.8889,
+      "Recall@K": 0.7654,
+      "MRR": 0.7019,
+      "NDCG@K": 0.6712,
+      "Mean_Latency_ms": 0.1207
+    },
+    "Hybrid RRF": {
+      "Hit@K": 0.9259,
+      "Recall@K": 0.8333,
+      "MRR": 0.8457,
+      "NDCG@K": 0.804,
+      "Mean_Latency_ms": 0.2082
+    },
+    "Hybrid + Reranker": {
+      "Hit@K": 1.0,
+      "Recall@K": 0.9321,
+      "MRR": 0.8827,
+      "NDCG@K": 0.862,
+      "Mean_Latency_ms": 0.2727
+    }
+  },
+  "category_results": {
+    "technical_acronym": {
+      "BM25 Only": {
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 0.9948,
+        "Mean_Latency_ms": 0.0
+      },
+      "Dense Only": {
+        "Hit@K": 1.0,
+        "Recall@K": 0.9286,
+        "MRR": 0.7857,
+        "NDCG@K": 0.817,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid RRF": {
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 0.9921,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid + Reranker": {
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 0.9948,
+        "Mean_Latency_ms": 0.0
+      }
+    },
+    "semantic_paraphrase": {
+      "BM25 Only": {
+        "Hit@K": 1.0,
+        "Recall@K": 0.7857,
+        "MRR": 1.0,
+        "NDCG@K": 0.8178,
+        "Mean_Latency_ms": 0.0
+      },
+      "Dense Only": {
+        "Hit@K": 0.8571,
+        "Recall@K": 0.7143,
+        "MRR": 0.4929,
+        "NDCG@K": 0.4629,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid RRF": {
+        "Hit@K": 0.8571,
+        "Recall@K": 0.7143,
+        "MRR": 0.6429,
+        "NDCG@K": 0.5811,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid + Reranker": {
+        "Hit@K": 1.0,
+        "Recall@K": 0.7857,
+        "MRR": 0.7857,
+        "NDCG@K": 0.6495,
+        "Mean_Latency_ms": 0.0
+      }
+    },
+    "multi_passage": {
+      "BM25 Only": {
+        "Hit@K": 1.0,
+        "Recall@K": 0.8611,
+        "MRR": 0.75,
+        "NDCG@K": 0.7369,
+        "Mean_Latency_ms": 0.0
+      },
+      "Dense Only": {
+        "Hit@K": 0.6667,
+        "Recall@K": 0.3611,
+        "MRR": 0.6667,
+        "NDCG@K": 0.4833,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid RRF": {
+        "Hit@K": 0.8333,
+        "Recall@K": 0.5833,
+        "MRR": 0.7222,
+        "NDCG@K": 0.6161,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid + Reranker": {
+        "Hit@K": 1.0,
+        "Recall@K": 0.9444,
+        "MRR": 0.7222,
+        "NDCG@K": 0.7938,
+        "Mean_Latency_ms": 0.0
+      }
+    },
+    "table_specification": {
+      "BM25 Only": {
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 1.0,
+        "Mean_Latency_ms": 0.0
+      },
+      "Dense Only": {
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 0.8571,
+        "NDCG@K": 0.8946,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid RRF": {
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 1.0,
+        "Mean_Latency_ms": 0.0
+      },
+      "Hybrid + Reranker": {
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 1.0,
+        "Mean_Latency_ms": 0.0
+      }
+    }
+  }
+}

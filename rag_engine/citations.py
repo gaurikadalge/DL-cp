@@ -55,7 +55,10 @@ class CitationValidator:
         for tag in unique_tags:
             chunk = citation_map.get(tag)
             if chunk is None:
-                logger.warning("Answer references unknown citation tag '%s' not present in retrieved context.", tag)
+                logger.warning(
+                    "Answer references unknown citation tag '%s' not present in retrieved context.",
+                    tag,
+                )
                 unresolvable_tags.add(tag)
                 continue
 

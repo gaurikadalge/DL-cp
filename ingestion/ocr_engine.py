@@ -45,10 +45,12 @@ class TesseractOCREngine(OCREngine):
         if not self._cmd:
             return False
         import os
+
         if not (os.path.exists(self._cmd) or shutil.which(self._cmd)):
             return False
         try:
             import pytesseract
+
             self._pytesseract = pytesseract
             self._pytesseract.pytesseract.tesseract_cmd = self._cmd
             return True
@@ -91,6 +93,7 @@ class EasyOCREngine(OCREngine):
     def is_available(self) -> bool:
         try:
             import easyocr  # noqa: F401
+
             return True
         except ImportError:
             return False
@@ -98,6 +101,7 @@ class EasyOCREngine(OCREngine):
     def _get_reader(self):
         if self._reader is None:
             import easyocr
+
             self._reader = easyocr.Reader(self.languages, gpu=self.gpu)
         return self._reader
 
@@ -120,7 +124,9 @@ class EasyOCREngine(OCREngine):
 class MockOCREngine(OCREngine):
     """Deterministic mock OCR engine for fast unit tests without external models or binaries."""
 
-    def __init__(self, canned_response: str = "OCR Extracted Text: Sample content from scanned document."):
+    def __init__(
+        self, canned_response: str = "OCR Extracted Text: Sample content from scanned document."
+    ):
         self.canned_response = canned_response
         self.call_count = 0
 

@@ -28,6 +28,12 @@ format:
 smoke-test:
 	python scripts/smoke_test.py
 
+streamlit:
+	streamlit run app/frontend.py --server.port 8501
+
+eval:
+	PYTHONPATH=. python evaluation/evaluate_retrieval.py
+
 clean:
 	rm -rf __pycache__ .pytest_cache .ruff_cache build dist *.egg-info
 	find . -type d -name "__pycache__" -exec rm -rf {} +

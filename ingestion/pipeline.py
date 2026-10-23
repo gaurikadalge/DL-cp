@@ -145,7 +145,9 @@ class MultimodalIngestionPipeline:
                         tables.extend(page_tables)
 
                     if self.extract_figures:
-                        page_figures = self.figure_extractor.extract_figures_from_page(doc, page, page_num)
+                        page_figures = self.figure_extractor.extract_figures_from_page(
+                            doc, page, page_num
+                        )
                         figures.extend(page_figures)
             finally:
                 doc.close()
@@ -192,7 +194,11 @@ class MultimodalIngestionPipeline:
         result = self.process(file_input=file_input, filename=filename, document_id=document_id)
         if result.chunks and hasattr(index_manager, "add_chunks"):
             index_manager.add_chunks(result.chunks)
-            logger.info("Synchronized %d chunks from '%s' into IndexManager", len(result.chunks), result.filename)
+            logger.info(
+                "Synchronized %d chunks from '%s' into IndexManager",
+                len(result.chunks),
+                result.filename,
+            )
         return result
 
     def process_directory(self, directory_path: str | Path) -> list[IngestionResult]:
@@ -208,6 +214,8 @@ class MultimodalIngestionPipeline:
                     res = self.process(file_path, filename=file_path.name)
                     results.append(res)
                 except Exception as e:
-                    logger.warning("Batch processing skipped failed file '%s': %s", file_path.name, e)
+                    logger.warning(
+                        "Batch processing skipped failed file '%s': %s", file_path.name, e
+                    )
 
         return results

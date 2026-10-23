@@ -45,6 +45,7 @@ class EmbeddingService:
         if self._model is None:
             try:
                 from sentence_transformers import SentenceTransformer
+
                 logger.info("Loading embedding model '%s' on %s...", self.model_name, self.device)
                 self._model = SentenceTransformer(self.model_name, device=self.device)
             except Exception as e:
@@ -61,7 +62,9 @@ class EmbeddingService:
         if self._dimension is not None:
             return self._dimension
 
-        if self._custom_encoder is not None and hasattr(self._custom_encoder, "get_sentence_embedding_dimension"):
+        if self._custom_encoder is not None and hasattr(
+            self._custom_encoder, "get_sentence_embedding_dimension"
+        ):
             self._dimension = self._custom_encoder.get_sentence_embedding_dimension()
             return self._dimension
 
@@ -139,7 +142,9 @@ class EmbeddingService:
             raise ValueError("Search query cannot be empty or whitespace only.")
 
         # Apply query prefix/instruction if configured
-        formatted_query = f"{self.query_instruction} {stripped}" if self.query_instruction else stripped
+        formatted_query = (
+            f"{self.query_instruction} {stripped}" if self.query_instruction else stripped
+        )
 
         vectors = self.embed_texts([formatted_query])
         return vectors[0]

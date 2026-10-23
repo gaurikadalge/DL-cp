@@ -13,7 +13,9 @@ def create_sample_academic_pdf() -> bytes:
 
     # Page 1: Abstract and Introduction
     page1 = doc.new_page()
-    page1.insert_text(fitz.Point(72, 72), "Multimodal Representation Learning in Deep Neural Systems", fontsize=16)
+    page1.insert_text(
+        fitz.Point(72, 72), "Multimodal Representation Learning in Deep Neural Systems", fontsize=16
+    )
     page1.insert_text(fitz.Point(72, 110), "Abstract", fontsize=13)
     page1.insert_text(
         fitz.Point(72, 130),

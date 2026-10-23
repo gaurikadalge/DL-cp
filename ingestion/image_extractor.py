@@ -67,7 +67,9 @@ class CaptioningEngine(ABC):
     """Abstract interface for image captioning vision models."""
 
     @abstractmethod
-    def generate_caption(self, image_input: Image.Image | bytes, context_text: str | None = None) -> str:
+    def generate_caption(
+        self, image_input: Image.Image | bytes, context_text: str | None = None
+    ) -> str:
         """Generate a natural language description of an image."""
         pass
 
@@ -89,14 +91,21 @@ class BLIPCaptioningEngine(CaptioningEngine):
         if self._model is None:
             try:
                 from transformers import BlipForConditionalGeneration, BlipProcessor
-                logger.info("Loading BLIP captioning model '%s' on %s...", self.model_name, self.device)
+
+                logger.info(
+                    "Loading BLIP captioning model '%s' on %s...", self.model_name, self.device
+                )
                 self._processor = BlipProcessor.from_pretrained(self.model_name)
-                self._model = BlipForConditionalGeneration.from_pretrained(self.model_name).to(self.device)
+                self._model = BlipForConditionalGeneration.from_pretrained(self.model_name).to(
+                    self.device
+                )
             except Exception as e:
                 logger.error("Failed to load BLIP model '%s': %s", self.model_name, e)
                 raise RuntimeError(f"Unable to load BLIP model '{self.model_name}': {e}") from e
 
-    def generate_caption(self, image_input: Image.Image | bytes, context_text: str | None = None) -> str:
+    def generate_caption(
+        self, image_input: Image.Image | bytes, context_text: str | None = None
+    ) -> str:
         self._load_model()
 
         if isinstance(image_input, bytes):
@@ -113,7 +122,9 @@ class BLIPCaptioningEngine(CaptioningEngine):
 class HeuristicCaptioningEngine(CaptioningEngine):
     """Lightweight rule-based captioning using spatial PDF caption text and image dimensions."""
 
-    def generate_caption(self, image_input: Image.Image | bytes, context_text: str | None = None) -> str:
+    def generate_caption(
+        self, image_input: Image.Image | bytes, context_text: str | None = None
+    ) -> str:
         if context_text and context_text.strip():
             return context_text.strip()
         return "Academic diagram or figure illustration extracted from publication."
@@ -122,11 +133,16 @@ class HeuristicCaptioningEngine(CaptioningEngine):
 class MockCaptioningEngine(CaptioningEngine):
     """Deterministic mock captioning engine for testing."""
 
-    def __init__(self, canned_caption: str = "Diagram illustrating neural network architecture and data flow."):
+    def __init__(
+        self,
+        canned_caption: str = "Diagram illustrating neural network architecture and data flow.",
+    ):
         self.canned_caption = canned_caption
         self.call_count = 0
 
-    def generate_caption(self, image_input: Image.Image | bytes, context_text: str | None = None) -> str:
+    def generate_caption(
+        self, image_input: Image.Image | bytes, context_text: str | None = None
+    ) -> str:
         self.call_count += 1
         if context_text:
             return f"{context_text.strip()} ({self.canned_caption})"
@@ -216,7 +232,7 @@ class FigureExtractor:
                 ai_desc = self.captioning_engine.generate_caption(img_bytes, context_text=caption)
 
                 figure = ExtractedFigure(
-                    figure_id=f"p{page_number}_fig_{idx+1}",
+                    figure_id=f"p{page_number}_fig_{idx + 1}",
                     page_number=page_number,
                     caption=caption,
                     ai_description=ai_desc,
@@ -228,6 +244,8 @@ class FigureExtractor:
                 )
                 extracted.append(figure)
             except Exception as e:
-                logger.warning("Failed extracting figure xref %d on page %d: %s", xref, page_number, e)
+                logger.warning(
+                    "Failed extracting figure xref %d on page %d: %s", xref, page_number, e
+                )
 
         return extracted

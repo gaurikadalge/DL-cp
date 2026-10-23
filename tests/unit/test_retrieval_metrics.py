@@ -16,7 +16,9 @@ def test_hit_at_k():
 def test_recall_at_k():
     ground_truth = {"c1", "c2", "c3"}
     # Retrieved 2 of 3 in top 3
-    assert pytest.approx(recall_at_k(["c1", "c4", "c2", "c5"], ground_truth, k=3), 1e-4) == 2.0 / 3.0
+    assert (
+        pytest.approx(recall_at_k(["c1", "c4", "c2", "c5"], ground_truth, k=3), 1e-4) == 2.0 / 3.0
+    )
     # Retrieved 0 of 3
     assert recall_at_k(["c4", "c5"], ground_truth, k=2) == 0.0
 

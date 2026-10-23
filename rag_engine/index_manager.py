@@ -53,7 +53,9 @@ class IndexManager:
         ]
         rebuild_embeddings: np.ndarray | None = None
         if remaining_chunks:
-            rebuild_embeddings = self.embedding_service.embed_texts([c.text for c in remaining_chunks])
+            rebuild_embeddings = self.embedding_service.embed_texts(
+                [c.text for c in remaining_chunks]
+            )
 
         dense_removed = self.dense_retriever.delete_document(
             document_id=document_id,

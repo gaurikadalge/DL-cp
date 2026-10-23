@@ -63,7 +63,9 @@ class DenseRetriever:
             self.id_map.append(chunk.chunk_id)
             self.chunk_store[chunk.chunk_id] = chunk
 
-        logger.info("Added %d chunks to FAISS dense index (total: %d)", len(chunks), self.index.ntotal)
+        logger.info(
+            "Added %d chunks to FAISS dense index (total: %d)", len(chunks), self.index.ntotal
+        )
 
     def search(
         self,
@@ -90,7 +92,11 @@ class DenseRetriever:
             return []
 
         # If document filter applied, search larger candidate pool to ensure top_k filtered matches
-        search_k = min(self.index.ntotal, max(top_k * 4, 50)) if document_ids else min(top_k, self.index.ntotal)
+        search_k = (
+            min(self.index.ntotal, max(top_k * 4, 50))
+            if document_ids
+            else min(top_k, self.index.ntotal)
+        )
 
         distances, indices = self.index.search(query_vector, search_k)
 
@@ -114,7 +120,9 @@ class DenseRetriever:
 
         return results
 
-    def delete_document(self, document_id: str, rebuild_embeddings: np.ndarray | None = None) -> int:
+    def delete_document(
+        self, document_id: str, rebuild_embeddings: np.ndarray | None = None
+    ) -> int:
         """Remove all chunks associated with a document_id and rebuild index integrity.
 
         Returns:
@@ -150,7 +158,12 @@ class DenseRetriever:
         self.index = new_index
         self.id_map = ids_to_keep
 
-        logger.info("Deleted %d chunks for doc '%s'. Remaining total: %d", removed_count, document_id, self.index.ntotal)
+        logger.info(
+            "Deleted %d chunks for doc '%s'. Remaining total: %d",
+            removed_count,
+            document_id,
+            self.index.ntotal,
+        )
         return removed_count
 
     def save(self, directory: str | Path) -> None:
@@ -191,9 +204,7 @@ class DenseRetriever:
         retriever = cls(dimension=dimension)
         retriever.index = faiss.read_index(str(index_file))
         retriever.id_map = meta["id_map"]
-        retriever.chunk_store = {
-            c["chunk_id"]: StableChunkMetadata(**c) for c in meta["chunks"]
-        }
+        retriever.chunk_store = {c["chunk_id"]: StableChunkMetadata(**c) for c in meta["chunks"]}
 
         if retriever.index.ntotal != len(retriever.id_map):
             logger.warning(

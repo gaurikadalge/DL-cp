@@ -37,7 +37,12 @@ logger = logging.getLogger("app.main")
 async def lifespan(app: FastAPI):
     """Application lifespan manager for startup and shutdown routines."""
     settings = get_settings()
-    logger.info("Initializing %s (v%s) in '%s' environment", settings.app_name, __version__, settings.app_env)
+    logger.info(
+        "Initializing %s (v%s) in '%s' environment",
+        settings.app_name,
+        __version__,
+        settings.app_env,
+    )
 
     # Ensure runtime data directories exist safely
     settings.storage_dir.mkdir(parents=True, exist_ok=True)
@@ -99,7 +104,7 @@ def create_app() -> FastAPI:
             for err in exc.errors()
         ]
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=getattr(status, "HTTP_422_UNPROCESSABLE_CONTENT", 422),
             content=ErrorDetail(
                 error_code="VALIDATION_ERROR",
                 message="Request payload validation failed",
@@ -109,7 +114,9 @@ def create_app() -> FastAPI:
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception):
-        logger.error("Unhandled exception processing request to %s", request.url.path, exc_info=True)
+        logger.error(
+            "Unhandled exception processing request to %s", request.url.path, exc_info=True
+        )
         # Never leak raw traceback or system paths in production/API responses
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -155,18 +162,24 @@ def create_app() -> FastAPI:
         # Audit dependency readiness honestly
         dependencies = {
             "database": (
-                DependencyStatus.CONFIGURED if settings.database_url else DependencyStatus.NOT_CONFIGURED
+                DependencyStatus.CONFIGURED
+                if settings.database_url
+                else DependencyStatus.NOT_CONFIGURED
             ),
             "vector_index": DependencyStatus.NOT_LOADED_SCAFFOLD,
             "keyword_retrieval": DependencyStatus.NOT_LOADED_SCAFFOLD,
             "llm_provider": (
-                DependencyStatus.CONFIGURED if settings.llm_provider else DependencyStatus.NOT_CONFIGURED
+                DependencyStatus.CONFIGURED
+                if settings.llm_provider
+                else DependencyStatus.NOT_CONFIGURED
             ),
             "ocr_engine": (
                 DependencyStatus.AVAILABLE if settings.ocr_enabled else DependencyStatus.DISABLED
             ),
             "reranker": (
-                DependencyStatus.AVAILABLE if settings.reranker_enabled else DependencyStatus.DISABLED
+                DependencyStatus.AVAILABLE
+                if settings.reranker_enabled
+                else DependencyStatus.DISABLED
             ),
         }
 
@@ -180,7 +193,13 @@ def create_app() -> FastAPI:
 
     # Mount Document Lifecycle API routes
     from app.api.documents import router as documents_router
+
     app.include_router(documents_router)
+
+    # Mount Query & QA API routes
+    from app.api.query import router as query_router
+
+    app.include_router(query_router)
 
     return app
 

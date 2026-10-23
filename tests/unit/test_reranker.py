@@ -57,6 +57,7 @@ def test_reranker_rescoring():
 
 def test_reranker_failure_fallback():
     """Verify encoder exception falls back gracefully to RRF candidates."""
+
     class FailingEncoder:
         def predict(self, pairs):
             raise RuntimeError("CUDA out of memory simulation")

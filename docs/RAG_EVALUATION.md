@@ -43,7 +43,7 @@ The benchmark dataset (`evaluation/benchmark_dataset.py`) defines academic text 
         "resnet#chunk_003": 1.0,
     },
     "expected_documents": {"doc_resnet"},
-    "notes": "Targeted conceptual query matching ResNet formulation."
+    "notes": "Targeted conceptual query matching ResNet formulation.",
 }
 ```
 

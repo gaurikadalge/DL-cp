@@ -79,14 +79,22 @@ class DocumentValidator:
             return "image/jpeg"
 
         # TIFF
-        if file_bytes.startswith(TIFF_LE_MAGIC_HEADER) or file_bytes.startswith(TIFF_BE_MAGIC_HEADER):
+        if file_bytes.startswith(TIFF_LE_MAGIC_HEADER) or file_bytes.startswith(
+            TIFF_BE_MAGIC_HEADER
+        ):
             return "image/tiff"
 
         # WebP
-        if len(file_bytes) >= 12 and file_bytes.startswith(WEBP_RIFF_HEADER) and file_bytes[8:12] == WEBP_TYPE_HEADER:
+        if (
+            len(file_bytes) >= 12
+            and file_bytes.startswith(WEBP_RIFF_HEADER)
+            and file_bytes[8:12] == WEBP_TYPE_HEADER
+        ):
             return "image/webp"
 
-        raise ValueError("Unsupported or corrupted document format: magic header does not match PDF or supported image types.")
+        raise ValueError(
+            "Unsupported or corrupted document format: magic header does not match PDF or supported image types."
+        )
 
     def validate(
         self,

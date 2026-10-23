@@ -82,6 +82,25 @@ class RAGPipeline:
             )
             reranking_ms = (time.perf_counter() - start_rerank) * 1000.0
 
+        # Apply minimum evidence threshold if configured
+        if self.minimum_evidence_threshold > 0.0 and candidates:
+            candidates = [
+                c
+                for c in candidates
+                if (
+                    c.scoring.rerank_score is not None
+                    and c.scoring.rerank_score >= self.minimum_evidence_threshold
+                )
+                or (
+                    c.scoring.dense_score is not None
+                    and c.scoring.dense_score >= self.minimum_evidence_threshold
+                )
+                or (
+                    c.scoring.fusion_score is not None
+                    and c.scoring.fusion_score >= self.minimum_evidence_threshold
+                )
+            ]
+
         # ----------------------------------------------------------------------
         # Stage 3: Evidence Selection & Context Construction
         # ----------------------------------------------------------------------

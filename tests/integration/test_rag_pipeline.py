@@ -8,6 +8,7 @@ from rag_engine.rag_pipeline import create_pipeline
 
 class DeterministicEncoder:
     """Mock encoder creating deterministic word-hashed vectors."""
+
     def __init__(self, dimension: int = 32):
         self.dimension = dimension
 
@@ -18,6 +19,7 @@ class DeterministicEncoder:
         import hashlib
 
         import numpy as np
+
         vecs = []
         for t in texts:
             vec = np.zeros(self.dimension, dtype=np.float32)

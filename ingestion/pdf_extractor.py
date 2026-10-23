@@ -92,7 +92,9 @@ class PDFExtractor:
         self.ocr_enabled = ocr_enabled
 
     @staticmethod
-    def _is_section_heading(line: str, font_size: float = 10.0, avg_font_size: float = 10.0) -> bool:
+    def _is_section_heading(
+        line: str, font_size: float = 10.0, avg_font_size: float = 10.0
+    ) -> bool:
         """Evaluate whether a line represents an academic section heading."""
         stripped = line.strip()
         if not stripped or len(stripped) > 80:
@@ -151,7 +153,12 @@ class PDFExtractor:
             text_blocks: list[TextBlock] = []
             page_sections: list[str] = []
 
-            if is_scanned and self.ocr_enabled and self.ocr_engine and self.ocr_engine.is_available():
+            if (
+                is_scanned
+                and self.ocr_enabled
+                and self.ocr_engine
+                and self.ocr_engine.is_available()
+            ):
                 # Render page to pixmap image and run OCR
                 try:
                     pix = page.get_pixmap(dpi=200)

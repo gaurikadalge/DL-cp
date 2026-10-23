@@ -65,4 +65,7 @@ def test_validator_rejects_corrupted_header():
 def test_validator_sanitizes_filename():
     validator = DocumentValidator()
     assert validator.sanitize_filename("../../etc/passwd.pdf") == "passwd.pdf"
-    assert validator.sanitize_filename("my research paper (2024) [final].pdf") == "my_research_paper__2024___final_.pdf"
+    assert (
+        validator.sanitize_filename("my research paper (2024) [final].pdf")
+        == "my_research_paper__2024___final_.pdf"
+    )

@@ -47,7 +47,9 @@ def test_token_budget_enforcement():
     # Very small budget (~20 tokens = 80 chars)
     builder = ContextBuilder(token_budget=20)
     e1 = make_evidence("c1", "Short text block.")
-    e2 = make_evidence("c2", "A very long text block that should exceed the small token budget limit.")
+    e2 = make_evidence(
+        "c2", "A very long text block that should exceed the small token budget limit."
+    )
 
     context_str, citation_map = builder.build_context([e1, e2])
     # Should only contain [1]

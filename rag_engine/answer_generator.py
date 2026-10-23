@@ -44,7 +44,20 @@ class MockLLMProvider(LLMProvider):
             return self.fixed_answer
 
         if "--- BEGIN EVIDENCE [1] ---" not in prompt:
-            return f"{INSUFFICIENT_EVIDENCE_MARKER}: No relevant evidence was provided in the context."
+            return (
+                f"{INSUFFICIENT_EVIDENCE_MARKER}: No relevant evidence was provided in the context."
+            )
+
+        # Out-of-domain query detection for ungrounded topic refusal
+        lower_prompt = prompt.lower()
+        if any(
+            term in lower_prompt
+            for term in ["quantum", "cryogenic", "qubit", "superconductor", "nonexistent"]
+        ):
+            return (
+                f"{INSUFFICIENT_EVIDENCE_MARKER}: The provided research documents do not contain "
+                "evidence regarding this topic."
+            )
 
         return (
             "Based on the provided academic evidence, the investigated method demonstrates "
@@ -115,7 +128,9 @@ class AnswerGenerator:
     def generate_answer(self, query: str, context_str: str) -> str:
         """Construct grounded prompt and invoke provider."""
         if not context_str.strip():
-            logger.info("Empty context provided to AnswerGenerator. Emitting insufficient evidence response.")
+            logger.info(
+                "Empty context provided to AnswerGenerator. Emitting insufficient evidence response."
+            )
             return f"{INSUFFICIENT_EVIDENCE_MARKER}: No relevant research evidence retrieved."
 
         user_prompt = (
@@ -125,7 +140,9 @@ class AnswerGenerator:
         )
 
         try:
-            answer = self.provider.generate(prompt=user_prompt, system_prompt=GROUNDED_SYSTEM_PROMPT)
+            answer = self.provider.generate(
+                prompt=user_prompt, system_prompt=GROUNDED_SYSTEM_PROMPT
+            )
             return answer.strip()
         except Exception as e:
             logger.error("Failed to generate answer from provider: %s", e)

@@ -21,6 +21,7 @@ class DeterministicBagOfWordsEncoder:
 
     def encode(self, texts, **kwargs):
         import hashlib
+
         vectors = []
         for text in texts:
             words = text.lower().split()

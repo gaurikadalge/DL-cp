@@ -40,11 +40,14 @@ def test_dense_retrieval_and_mapping():
     chunks = sample_chunks()
 
     # Create 3 orthogonal unit vectors
-    embeddings = np.array([
-        [1.0, 0.0, 0.0, 0.0],
-        [0.0, 1.0, 0.0, 0.0],
-        [0.0, 0.0, 1.0, 0.0],
-    ], dtype=np.float32)
+    embeddings = np.array(
+        [
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+        ],
+        dtype=np.float32,
+    )
 
     retriever.add_chunks(chunks, embeddings)
     assert retriever.total_chunks == 3

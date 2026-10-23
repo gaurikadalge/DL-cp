@@ -113,7 +113,12 @@ class BM25Retriever:
         else:
             self._bm25 = None
 
-        logger.info("Deleted %d BM25 chunks for doc '%s'. Remaining: %d", removed_count, document_id, len(self.chunks))
+        logger.info(
+            "Deleted %d BM25 chunks for doc '%s'. Remaining: %d",
+            removed_count,
+            document_id,
+            len(self.chunks),
+        )
         return removed_count
 
     def save(self, directory: str | Path) -> None:
@@ -122,9 +127,7 @@ class BM25Retriever:
         target_dir.mkdir(parents=True, exist_ok=True)
         file_path = target_dir / "bm25_metadata.json"
 
-        payload = {
-            "chunks": [chunk.model_dump(mode="json") for chunk in self.chunks]
-        }
+        payload = {"chunks": [chunk.model_dump(mode="json") for chunk in self.chunks]}
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(payload, f, indent=2)
 

@@ -11,7 +11,9 @@ from app.main import app
 def make_pdf_bytes() -> bytes:
     doc = fitz.open()
     page = doc.new_page()
-    page.insert_text(fitz.Point(50, 50), "1. Document API Test\nSample academic text for API upload testing.")
+    page.insert_text(
+        fitz.Point(50, 50), "1. Document API Test\nSample academic text for API upload testing."
+    )
     data = doc.tobytes()
     doc.close()
     return data

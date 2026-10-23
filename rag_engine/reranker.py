@@ -36,7 +36,10 @@ class RerankerService:
         if self._model is None and self.enabled:
             try:
                 from sentence_transformers import CrossEncoder
-                logger.info("Loading CrossEncoder model '%s' on %s...", self.model_name, self.device)
+
+                logger.info(
+                    "Loading CrossEncoder model '%s' on %s...", self.model_name, self.device
+                )
                 self._model = CrossEncoder(self.model_name, device=self.device)
             except Exception as e:
                 logger.error("Failed to load CrossEncoder model '%s': %s", self.model_name, e)
@@ -74,9 +77,13 @@ class RerankerService:
                 scored_candidates.append(cand)
 
             # Sort descending by rerank_score
-            scored_candidates.sort(key=lambda c: c.scoring.rerank_score or -float("inf"), reverse=True)
+            scored_candidates.sort(
+                key=lambda c: c.scoring.rerank_score or -float("inf"), reverse=True
+            )
 
-            logger.info("Successfully reranked %d candidates using %s", len(candidates), self.model_name)
+            logger.info(
+                "Successfully reranked %d candidates using %s", len(candidates), self.model_name
+            )
             return scored_candidates[:top_k] if top_k else scored_candidates
 
         except Exception as e:
