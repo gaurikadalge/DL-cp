@@ -201,6 +201,21 @@ def create_app() -> FastAPI:
 
     app.include_router(query_router)
 
+    @app.get(
+        "/evaluation/benchmark",
+        summary="Retrieval Benchmark Results",
+        tags=["Evaluation"],
+    )
+    async def get_benchmark_results() -> dict:
+        """Returns verified machine-readable retrieval benchmark metrics."""
+        import json
+        from pathlib import Path
+
+        results_file = Path("evaluation/retrieval_benchmark_results.json")
+        if results_file.exists():
+            return json.loads(results_file.read_text(encoding="utf-8"))
+        return {"error": "Benchmark results not yet generated"}
+
     return app
 
 
