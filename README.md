@@ -111,20 +111,65 @@ cp .env.example .env
 
 ---
 
+---
+
 ## 6. Running the System
 
 ### 6.1 Start the FastAPI Backend
+Ensure your virtual environment is active, then launch the FastAPI server:
 ```bash
 uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
-Interactive API docs are available at `http://127.0.0.1:8000/docs`.
+Interactive API documentation is available at:
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- Redoc: `http://127.0.0.1:8000/redoc`
 
-### 6.2 Launch the Streamlit Research Portal
-In a separate terminal window:
+---
+
+### 6.2 User Interfaces (Two Supported Frontends)
+
+The system provides two dedicated interfaces depending on evaluation needs:
+
+#### Interface A: Next.js Web Application (Primary Modern Frontend)
+- **Directory**: `frontend/`
+- **Stack**: Next.js 16 (App Router), React 19, TypeScript 5, Tailwind CSS v4, Recharts
+- **Prerequisites**: Node.js v18.18.0+ (Node.js 20+ recommended), npm
+
+```bash
+cd frontend
+
+# 1. Install dependencies using the committed lockfile
+npm ci
+
+# 2. Configure environment (points to FastAPI backend)
+cp .env.example .env.local
+# NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
+
+# 3. Start development server
+npm run dev
+
+# 4. Or build and run production bundle
+npm run build
+npm run start
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser. The app connects to the FastAPI backend and includes 5 dedicated pages:
+- `/`: Executive Dashboard with real-time KPI metrics and pipeline topology
+- `/assistant`: Conversational Research Assistant with interactive citations and slide-over evidence inspector
+- `/documents`: Drag-and-drop PDF uploader, document metadata table, and deletion actions
+- `/evaluation`: Recharts benchmark visualizations across 4 retrieval strategies, category breakdown, and CSV export
+- `/settings`: Diagnostics grid monitoring all 6 pipeline subsystems and latency tester
+
+#### Interface B: Streamlit Research Portal (Alternative Interactive UI)
+- **Entry point**: `app/frontend.py`
+- **Stack**: Streamlit 1.32+
+
+In a separate terminal:
 ```bash
 streamlit run app/frontend.py --server.port 8501
 ```
-Open your browser at `http://localhost:8501`.
+Open [http://localhost:8501](http://localhost:8501) for the lightweight Streamlit portal.
+
+---
 
 ### 6.3 Run the CLI Smoke Test
 With the backend running:

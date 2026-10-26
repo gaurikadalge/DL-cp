@@ -42,6 +42,7 @@ This living document tracks the concrete implementation state of the **Multimoda
 | Grounded LLM Generation | Generation | **Implemented and tested** | `rag_engine/answer_generator.py` with refusal safeguard |
 | Verifiable Citations | Generation | **Implemented and tested** | `rag_engine/citations.py` post-generation parser & mapper |
 | Streamlit Research Portal | Frontend | **Implemented and tested** | `app/frontend.py` interactive QA, document management & metrics |
+| Next.js Web Application | Frontend | **Implemented and tested** | `frontend/` App Router, TypeScript 5, Tailwind CSS v4, Recharts, 5 verified routes |
 | Quantitative Retrieval Evaluation | Evaluation | **Implemented and tested** | `evaluation/evaluate_retrieval.py` Hit@K, Recall@K, MRR, NDCG@K |
 | Automated Test Suite | Testing | **Implemented and tested** | 84 tests across unit, integration, and e2e passed in 0.54s |
 | CLI Smoke Test Script | Testing | **Implemented and tested** | `scripts/smoke_test.py` validates root, health, docs, and query |
@@ -84,11 +85,17 @@ This living document tracks the concrete implementation state of the **Multimoda
 - `IndexManager` (Synchronized add, persist, load, delete, rebuild lifecycle): **Implemented and tested**
 - `RAGPipeline` (Full end-to-end question answering pipeline with monotonic timing and minimum evidence thresholds): **Implemented and tested**
 
-### 3.4 User Interface & Evaluation (`evaluation/`, `app/frontend.py`)
+### 3.4 User Interface & Evaluation (`frontend/`, `app/frontend.py`, `evaluation/`)
 - Evaluation Metrics (Hit@K, Recall@K, MRR, NDCG@K): **Implemented and tested** (`evaluation/retrieval_metrics.py`)
 - Benchmark Dataset (Synthetic academic fixtures & queries): **Implemented and tested** (`evaluation/benchmark_dataset.py`)
 - Retrieval Evaluation Script (Baseline comparisons on BM25 vs Dense vs Hybrid): **Implemented and tested** (`evaluation/evaluate_retrieval.py`)
-- Streamlit Research Portal: **Implemented and verified** (`app/frontend.py`)
+- Next.js Web Application (`frontend/`): **Implemented and verified** (Next.js 16 App Router, React 19, TypeScript 5, Tailwind CSS v4, Recharts)
+  - `/` (Executive Dashboard): **Implemented and tested** (Live pipeline health polling, KPI statistics, quick query launchpad, recent documents table, and pipeline topology visualization)
+  - `/assistant` (Research Assistant): **Implemented and tested** (Conversational Q&A, interactive inline citations `[1]`, slide-over evidence inspector with granular scoring breakdown [FAISS, BM25, RRF rank, Cross-Encoder], $k$-slider, and low-evidence guardrail warning)
+  - `/documents` (Document Library): **Implemented and tested** (Drag-and-drop PDF upload with progress feedback, real-time search filtering, document metadata table with formatted file sizes, and deletion actions)
+  - `/evaluation` (Evaluation Dashboard): **Implemented and tested** (Interactive Recharts bar charts comparing Dense FAISS, BM25, Hybrid RRF, and Hybrid+Reranker across Hit@5, Recall@5, MRR, NDCG@5, and Latency; category breakdown table; and academic CSV export)
+  - `/settings` (System & Pipeline Diagnostics): **Implemented and tested** (Round-trip ping latency calculator, 6 subsystem dependency diagnostics, Swagger/Redoc references, and environment configuration guidelines)
+- Streamlit Research Portal (`app/frontend.py`): **Implemented and verified** (Alternative interactive research portal with Search & Ask, Document Ingestion, and Benchmark tabs)
 
 ---
 
