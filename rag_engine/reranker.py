@@ -17,7 +17,7 @@ class RerankerService:
     def __init__(
         self,
         enabled: bool = False,
-        model_name: str = "BAAI/bge-reranker-base",
+        model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2",
         device: str = "cpu",
         custom_encoder: object | None = None,
     ):

@@ -5,7 +5,7 @@
     "unanswerable_queries": 8,
     "total_fixture_chunks": 20,
     "k": 5,
-    "timestamp": "2026-10-23T05:12:54Z",
+    "timestamp": "2026-10-27T14:27:17Z",
     "evaluation_encoder": "DeterministicHashEncoder (dim=128)",
     "evaluation_reranker": "DeterministicCrossEncoder"
   },
@@ -15,28 +15,28 @@
       "Recall@K": 0.9136,
       "MRR": 0.9444,
       "NDCG@K": 0.893,
-      "Mean_Latency_ms": 0.11
+      "Mean_Latency_ms": 0.0736
     },
     "Dense Only": {
-      "Hit@K": 0.8889,
-      "Recall@K": 0.7654,
-      "MRR": 0.7019,
-      "NDCG@K": 0.6712,
-      "Mean_Latency_ms": 0.1207
+      "Hit@K": 1.0,
+      "Recall@K": 0.9259,
+      "MRR": 0.963,
+      "NDCG@K": 0.9233,
+      "Mean_Latency_ms": 4.8796
     },
     "Hybrid RRF": {
-      "Hit@K": 0.9259,
-      "Recall@K": 0.8333,
-      "MRR": 0.8457,
-      "NDCG@K": 0.804,
-      "Mean_Latency_ms": 0.2082
+      "Hit@K": 1.0,
+      "Recall@K": 0.963,
+      "MRR": 1.0,
+      "NDCG@K": 0.9526,
+      "Mean_Latency_ms": 4.5788
     },
     "Hybrid + Reranker": {
       "Hit@K": 1.0,
-      "Recall@K": 0.9321,
-      "MRR": 0.8827,
-      "NDCG@K": 0.862,
-      "Mean_Latency_ms": 0.2727
+      "Recall@K": 0.9815,
+      "MRR": 0.9815,
+      "NDCG@K": 0.9566,
+      "Mean_Latency_ms": 1571.0374
     }
   },
   "category_results": {
@@ -50,23 +50,23 @@
       },
       "Dense Only": {
         "Hit@K": 1.0,
-        "Recall@K": 0.9286,
-        "MRR": 0.7857,
-        "NDCG@K": 0.817,
+        "Recall@K": 1.0,
+        "MRR": 0.9286,
+        "NDCG@K": 0.9473,
         "Mean_Latency_ms": 0.0
       },
       "Hybrid RRF": {
         "Hit@K": 1.0,
         "Recall@K": 1.0,
         "MRR": 1.0,
-        "NDCG@K": 0.9921,
+        "NDCG@K": 0.9948,
         "Mean_Latency_ms": 0.0
       },
       "Hybrid + Reranker": {
         "Hit@K": 1.0,
         "Recall@K": 1.0,
         "MRR": 1.0,
-        "NDCG@K": 0.9948,
+        "NDCG@K": 1.0,
         "Mean_Latency_ms": 0.0
       }
     },
@@ -79,24 +79,24 @@
         "Mean_Latency_ms": 0.0
       },
       "Dense Only": {
-        "Hit@K": 0.8571,
-        "Recall@K": 0.7143,
-        "MRR": 0.4929,
-        "NDCG@K": 0.4629,
+        "Hit@K": 1.0,
+        "Recall@K": 0.8571,
+        "MRR": 0.9286,
+        "NDCG@K": 0.8726,
         "Mean_Latency_ms": 0.0
       },
       "Hybrid RRF": {
-        "Hit@K": 0.8571,
-        "Recall@K": 0.7143,
-        "MRR": 0.6429,
-        "NDCG@K": 0.5811,
+        "Hit@K": 1.0,
+        "Recall@K": 0.8571,
+        "MRR": 1.0,
+        "NDCG@K": 0.8635,
         "Mean_Latency_ms": 0.0
       },
       "Hybrid + Reranker": {
         "Hit@K": 1.0,
-        "Recall@K": 0.7857,
-        "MRR": 0.7857,
-        "NDCG@K": 0.6495,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 0.9368,
         "Mean_Latency_ms": 0.0
       }
     },
@@ -109,24 +109,24 @@
         "Mean_Latency_ms": 0.0
       },
       "Dense Only": {
-        "Hit@K": 0.6667,
-        "Recall@K": 0.3611,
-        "MRR": 0.6667,
-        "NDCG@K": 0.4833,
+        "Hit@K": 1.0,
+        "Recall@K": 0.8333,
+        "MRR": 1.0,
+        "NDCG@K": 0.865,
         "Mean_Latency_ms": 0.0
       },
       "Hybrid RRF": {
-        "Hit@K": 0.8333,
-        "Recall@K": 0.5833,
-        "MRR": 0.7222,
-        "NDCG@K": 0.6161,
+        "Hit@K": 1.0,
+        "Recall@K": 1.0,
+        "MRR": 1.0,
+        "NDCG@K": 0.9521,
         "Mean_Latency_ms": 0.0
       },
       "Hybrid + Reranker": {
         "Hit@K": 1.0,
-        "Recall@K": 0.9444,
-        "MRR": 0.7222,
-        "NDCG@K": 0.7938,
+        "Recall@K": 0.9167,
+        "MRR": 0.9167,
+        "NDCG@K": 0.8784,
         "Mean_Latency_ms": 0.0
       }
     },
@@ -141,8 +141,8 @@
       "Dense Only": {
         "Hit@K": 1.0,
         "Recall@K": 1.0,
-        "MRR": 0.8571,
-        "NDCG@K": 0.8946,
+        "MRR": 1.0,
+        "NDCG@K": 1.0,
         "Mean_Latency_ms": 0.0
       },
       "Hybrid RRF": {

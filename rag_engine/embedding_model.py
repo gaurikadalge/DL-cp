@@ -1,8 +1,18 @@
-"""Embedding service using Sentence Transformers with validation and lazy loading."""
-
 import logging
+import os
 
 import numpy as np
+
+# Prevent PyTorch/tokenizers thread contention and segmentation faults on Python 3.13 macOS ARM
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+
+try:
+    import torch
+
+    torch.set_num_threads(1)
+except ImportError:
+    pass
 
 logger = logging.getLogger("rag_engine.embedding_model")
 

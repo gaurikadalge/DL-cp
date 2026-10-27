@@ -56,13 +56,19 @@ class RAGService:
 
         encoder = custom_encoder
         if encoder is None:
-            try:
-                import sentence_transformers  # noqa: F401
-            except ImportError:
-                logger.info(
-                    "sentence_transformers not installed; activating DeterministicHashEncoder (dim=384)."
-                )
+            import os
+
+            if os.getenv("DL_CP_TEST_MODE", "").lower() in ("1", "true", "yes"):
+                logger.info("DL_CP_TEST_MODE active; activating DeterministicHashEncoder (dim=384).")
                 encoder = DeterministicHashEncoder(dimension=384)
+            else:
+                try:
+                    import sentence_transformers  # noqa: F401
+                except (ImportError, Exception):
+                    logger.info(
+                        "sentence_transformers not available or offline; activating DeterministicHashEncoder (dim=384)."
+                    )
+                    encoder = DeterministicHashEncoder(dimension=384)
 
         # Create configured pipeline
         self.pipeline: RAGPipeline = create_pipeline(

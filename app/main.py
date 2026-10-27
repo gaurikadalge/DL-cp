@@ -7,7 +7,19 @@ Provides:
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
+
+# Prevent PyTorch/tokenizers thread contention and segmentation faults on Python 3.13 macOS ARM
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+
+try:
+    import torch
+
+    torch.set_num_threads(1)
+except ImportError:
+    pass
 
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -159,15 +171,33 @@ def create_app() -> FastAPI:
         Note: Does not claim vector indexes, OCR engines, or LLMs are healthy unless
         explicitly initialized and verified.
         """
-        # Audit dependency readiness honestly
+        # Audit live dependency readiness
+        try:
+            from app.services.rag_service import get_rag_service
+
+            rag_service = get_rag_service()
+            vector_status = (
+                DependencyStatus.AVAILABLE
+                if rag_service.index_manager.dense_retriever is not None
+                else DependencyStatus.UNAVAILABLE
+            )
+            keyword_status = (
+                DependencyStatus.AVAILABLE
+                if rag_service.index_manager.bm25_retriever is not None
+                else DependencyStatus.UNAVAILABLE
+            )
+        except Exception:
+            vector_status = DependencyStatus.UNAVAILABLE
+            keyword_status = DependencyStatus.UNAVAILABLE
+
         dependencies = {
             "database": (
                 DependencyStatus.CONFIGURED
                 if settings.database_url
                 else DependencyStatus.NOT_CONFIGURED
             ),
-            "vector_index": DependencyStatus.NOT_LOADED_SCAFFOLD,
-            "keyword_retrieval": DependencyStatus.NOT_LOADED_SCAFFOLD,
+            "vector_index": vector_status,
+            "keyword_retrieval": keyword_status,
             "llm_provider": (
                 DependencyStatus.CONFIGURED
                 if settings.llm_provider

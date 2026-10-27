@@ -77,15 +77,22 @@ def run_evaluation(
     k: int = 5,
     custom_encoder: object | None = None,
     custom_reranker: object | None = None,
+    use_real_models: bool = False,
     save_results_path: str | Path | None = "./evaluation/retrieval_benchmark_results.json",
 ) -> dict:
     """Execute evaluation comparing BM25, Dense, Hybrid RRF, and Reranker retrieval modes."""
     # 1. Initialize services
-    encoder = custom_encoder or DeterministicHashEncoder(dimension=128)
-    embedding_service = EmbeddingService(
-        custom_encoder=encoder,
-        normalize=True,
-    )
+    if use_real_models:
+        logger.info("Using real neural models (all-MiniLM-L6-v2, ms-marco-MiniLM-L-6-v2)...")
+        embedding_service = EmbeddingService(normalize=True)
+        reranker = RerankerService(enabled=True)
+    else:
+        encoder = custom_encoder or DeterministicHashEncoder(dimension=128)
+        embedding_service = EmbeddingService(
+            custom_encoder=encoder,
+            normalize=True,
+        )
+        reranker = custom_reranker or DeterministicCrossEncoder()
 
     # 2. Build Dense Index
     dim = embedding_service.embedding_dimension
@@ -109,7 +116,7 @@ def run_evaluation(
     # 5. Build Reranker
     reranker = RerankerService(
         enabled=True,
-        custom_encoder=custom_reranker or DeterministicCrossEncoder(),
+        custom_encoder=None if use_real_models else (custom_reranker or DeterministicCrossEncoder()),
     )
 
     configs = ["BM25 Only", "Dense Only", "Hybrid RRF", "Hybrid + Reranker"]
@@ -302,5 +309,18 @@ def print_evaluation_report(payload: dict, k: int = 5):
 
 
 if __name__ == "__main__":
-    payload = run_evaluation(k=5)
-    print_evaluation_report(payload, k=5)
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Evaluate retrieval models on benchmark dataset.")
+    parser.add_argument(
+        "--use-real-models",
+        action="store_true",
+        help="Use real transformer models (SentenceTransformer and CrossEncoder) instead of fast deterministic fixtures.",
+    )
+    parser.add_argument("--k", type=int, default=5, help="Top-K evaluation cut-off (default: 5)")
+    args = parser.parse_args()
+
+    mode_label = "Real Transformer Models" if args.use_real_models else "Fast Deterministic Fixtures"
+    print(f"\n[*] Initializing Evaluation Run: {mode_label} (k={args.k})")
+    payload = run_evaluation(k=args.k, use_real_models=args.use_real_models)
+    print_evaluation_report(payload, k=args.k)

@@ -29,8 +29,8 @@ def test_health_endpoint():
 
     # Verify dependency statuses are accurately disclosed
     assert deps["database"] in ["configured", "not_configured"]
-    assert deps["vector_index"] == "not_loaded_scaffold"
-    assert deps["keyword_retrieval"] == "not_loaded_scaffold"
+    assert deps["vector_index"] in ["available", "configured"]
+    assert deps["keyword_retrieval"] in ["available", "configured"]
 
 
 def test_not_found_returns_structured_error():
