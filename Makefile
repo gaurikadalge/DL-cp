@@ -20,7 +20,7 @@ install:
 	pip install -r requirements-dev.txt
 
 dev:
-	uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+	uvicorn app.main:app --host 127.0.0.1 --port $${PORT:-8001} --reload
 
 test:
 	pytest tests/

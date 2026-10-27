@@ -24,8 +24,10 @@ import {
   Info,
   Sparkles,
 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function EvaluationPage() {
+  const { isDark } = useTheme();
   const [data, setData] = useState<BenchmarkResultsData>(FALLBACK_BENCHMARK_DATA);
   const [activeTab, setActiveTab] = useState<"overall" | "categories">("overall");
 
@@ -193,19 +195,20 @@ export default function EvaluationPage() {
               <div className="h-80 w-full pt-4">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                    <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                    <YAxis domain={[0, 1.1]} tick={{ fontSize: 11 }} />
+                    <CartesianGrid strokeDasharray="3 3" opacity={isDark ? 0.15 : 0.4} stroke={isDark ? "#64748b" : "#cbd5e1"} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: isDark ? "#94a3b8" : "#475569" }} stroke={isDark ? "#475569" : "#cbd5e1"} />
+                    <YAxis domain={[0, 1.1]} tick={{ fontSize: 11, fill: isDark ? "#94a3b8" : "#475569" }} stroke={isDark ? "#475569" : "#cbd5e1"} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#0f172a",
+                        backgroundColor: isDark ? "#0f172a" : "#ffffff",
                         borderRadius: "0.75rem",
-                        border: "1px solid #334155",
+                        border: isDark ? "1px solid #334155" : "1px solid #e2e8f0",
                         fontSize: "12px",
-                        color: "#fff",
+                        color: isDark ? "#fff" : "#0f172a",
+                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
                       }}
                     />
-                    <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
+                    <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px", color: isDark ? "#94a3b8" : "#475569" }} />
                     <Bar dataKey="Hit@5" fill="#2563eb" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="Recall@5" fill="#10b981" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="MRR" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
@@ -258,19 +261,20 @@ export default function EvaluationPage() {
             <div className="h-72 w-full pt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={multiPassageData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis domain={[0, 1.1]} tick={{ fontSize: 11 }} />
+                  <CartesianGrid strokeDasharray="3 3" opacity={isDark ? 0.15 : 0.4} stroke={isDark ? "#64748b" : "#cbd5e1"} />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: isDark ? "#94a3b8" : "#475569" }} stroke={isDark ? "#475569" : "#cbd5e1"} />
+                  <YAxis domain={[0, 1.1]} tick={{ fontSize: 11, fill: isDark ? "#94a3b8" : "#475569" }} stroke={isDark ? "#475569" : "#cbd5e1"} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#0f172a",
+                      backgroundColor: isDark ? "#0f172a" : "#ffffff",
                       borderRadius: "0.75rem",
-                      border: "1px solid #334155",
+                      border: isDark ? "1px solid #334155" : "1px solid #e2e8f0",
                       fontSize: "12px",
-                      color: "#fff",
+                      color: isDark ? "#fff" : "#0f172a",
+                      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
                     }}
                   />
-                  <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
+                  <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px", color: isDark ? "#94a3b8" : "#475569" }} />
                   <Bar dataKey="Recall" fill="#10b981" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="NDCG" fill="#f59e0b" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="MRR" fill="#8b5cf6" radius={[4, 4, 0, 0]} />

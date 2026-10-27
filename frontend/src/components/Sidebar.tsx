@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,6 +13,7 @@ import {
   ChevronRight,
   BookOpen,
 } from "lucide-react";
+import { api } from "@/lib/api";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -22,6 +23,15 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, onToggle, backendHealthy }: SidebarProps) {
   const pathname = usePathname();
+
+  const apiHost = useMemo(() => {
+    try {
+      const url = new URL(api.getBaseUrl());
+      return `${url.hostname}:${url.port || (url.protocol === "https:" ? "443" : "80")}`;
+    } catch {
+      return api.getBaseUrl().replace(/^https?:\/\//, "");
+    }
+  }, []);
 
   const navItems = [
     {
@@ -106,23 +116,24 @@ export function Sidebar({ collapsed, onToggle, backendHealthy }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 group relative ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group ${
                 isActive
-                  ? "bg-blue-600 text-white font-medium shadow-sm shadow-blue-600/20"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100"
+                  ? "bg-blue-600 text-white shadow-sm shadow-blue-500/25 font-semibold"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100 font-medium"
               }`}
+              title={collapsed ? item.name : undefined}
             >
               <Icon
-                className={`w-5 h-5 shrink-0 transition-transform group-hover:scale-105 ${
-                  isActive ? "text-white" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300"
+                className={`w-5 h-5 shrink-0 transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
                 }`}
               />
 
               {!collapsed && (
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold tracking-wide truncate">
-                    {item.name}
-                  </div>
+                  <div className="text-xs truncate">{item.name}</div>
                   <div
                     className={`text-[10px] truncate ${
                       isActive ? "text-blue-100" : "text-slate-400 dark:text-slate-500"
@@ -130,13 +141,6 @@ export function Sidebar({ collapsed, onToggle, backendHealthy }: SidebarProps) {
                   >
                     {item.description}
                   </div>
-                </div>
-              )}
-
-              {/* Collapsed Tooltip */}
-              {collapsed && (
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-lg z-50">
-                  {item.name}
                 </div>
               )}
             </Link>
@@ -164,7 +168,7 @@ export function Sidebar({ collapsed, onToggle, backendHealthy }: SidebarProps) {
                 {backendHealthy ? "Backend Connected" : "Backend Offline"}
               </p>
               <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate font-mono">
-                :8000
+                {apiHost}
               </p>
             </div>
           )}

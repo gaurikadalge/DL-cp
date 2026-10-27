@@ -8,7 +8,7 @@ from app.config import Settings
 
 def test_default_settings():
     """Verify default configuration values and types."""
-    settings = Settings()
+    settings = Settings(_env_file=None)
     assert settings.app_name == "Multimodal RAG Research Assistant"
     assert settings.app_env in ["development", "testing", "production"]
     assert settings.api_port == 8000

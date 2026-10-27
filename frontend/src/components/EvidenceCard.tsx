@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { RetrievedEvidence } from "@/types/api";
 import { ChevronDown, ChevronUp, FileText, Layers, Hash, Sparkles } from "lucide-react";
